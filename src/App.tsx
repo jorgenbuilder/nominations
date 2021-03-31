@@ -1,26 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import { db } from './firebase';
 
-function App() {
+const App:React.FC = () => {
+
+  const [test, setTest] = useState<any>(null);
+  
+  useEffect(() => {
+    db.collection('test').doc('test').get()
+    .then(setTest);
+  }, []);
+
+  console.log(test);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Test.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      Hello.
+    </>
+  )
 }
 
 export default App;
