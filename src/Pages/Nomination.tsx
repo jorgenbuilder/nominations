@@ -1,12 +1,13 @@
 import firebase from 'firebase';
-import { FirebaseAuthConsumer } from '@react-firebase/auth';
-import React, { FormEventHandler, useEffect, useState } from 'react';
+import { AuthContext } from '../Providers/Auth';
+import React, { FormEventHandler, useContext, useEffect, useState } from 'react';
 import { Badge, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round, Vote } from '../Models';
 
 const NominationPage:React.FC = () => {
+    const { authedFirebaseUser: user } = useContext(AuthContext);
     const { roundId, nominationId } = useParams<{roundId: string, nominationId: string}>();
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -18,18 +19,18 @@ const NominationPage:React.FC = () => {
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
-        //@ts-ignore
-        const userName = document.querySelector('#user-name')?.value;
-        //@ts-ignore
-        const userPhoto = document.querySelector('#user-photo')?.value;
+        if (!user) {
+            throw new Error('Can\'t vote; no user');
+        }
         const data: Vote = {
             points: userVote,
             user: {
-                name: userName,
-                avatarUrl: userPhoto,
+                uid: user.uid || undefined,
+                name: user.displayName || '???',
+                avatarUrl: user.photoURL || '',
             }
         };
-        const userExistingVote = votes.find((x: any) => x.data().user.name === userName)
+        const userExistingVote = votes.find((x: any) => x.data().user.name === user.displayName)
         if (userExistingVote) {
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
         }
@@ -69,81 +70,73 @@ const NominationPage:React.FC = () => {
         </>;
     }
 
-    const [_, entity, id] = nomination.data.spotifyURI.split(':');
-    console.log(`I didn't use ${_}.`)
-
-    console.log(nomination.data.spotifyURI.indexOf('spotify.com'));
+    const [, entity, id] = nomination.data.spotifyURI.split(':');
     const src = nomination.data.spotifyURI.indexOf('spotify.com') > -1
         ? nomination.data.spotifyURI.replace('.com/', '.com/embed/')
         : `https://open.spotify.com/embed/${entity}/${id}`;
     
     return (
         <>
-            <FirebaseAuthConsumer>
-                {({ user }) => {
-                    return <>
-                        <h1 style={{marginBottom: '1em'}}>{nomination.data.title}</h1>
-                        <iframe
-                            title="spotify embed"
-                            src={src}
-                            width="100%"
-                            height="380"
-                            frameBorder="0"
-                            allowTransparency={true}
-                            allow="encrypted-media"
-                            style={{marginBottom: '1em'}}
-                        />
-                        <h2 style={{marginBottom: '.5em'}}>Votes</h2>
-                        {votes.length
-                            ? <ListGroup style={{marginBottom: '2em'}}>
-                                {votes.map((vote: any) => {
-                                    const data: Vote = vote.data();
-                                    return <ListGroup.Item>
-                                        <img width="34" style={{marginRight: '.5em'}} src={data.user.avatarUrl} alt="User" />
-                                        {data.user.name}
-                                        <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
-                                    </ListGroup.Item>
-                                })}
-                                <ListGroup.Item>
-                                    <strong>Total</strong>
-                                    <Badge style={{float: 'right'}} variant="primary">{nomination.points}</Badge>
-                                </ListGroup.Item>
-                            </ListGroup>
-                            : <div style={{marginBottom: '1em'}}>No votes yet</div>}
-                        <h2 style={{marginBottom: '.5em'}}>Your Vote</h2>
-                        <Form onSubmit={handleSubmit}>
-                            <div onChange={(e) => {
-                                //@ts-ignore
-                                setUserVote(e.target.value)
-                            }}
-                            style={{marginBottom: '1em'}}
-                            >
-                                {Object.keys(round.votSchema).map((key: string) => {
-                                    return <Form.Check 
-                                        type='radio'
-                                        name={`vote`}
-                                        value={`${key}`}
-                                        id={`asdfasdf-${key}`}
-                                        //@ts-ignore
-                                        label={`${key} Point`}
-                                    />
-                                })}
-                                <Form.Check 
-                                    type='radio'
-                                    name={`vote`}
-                                    value={`0`}
-                                    id={`asdfasdf-0`}
-                                    //@ts-ignore
-                                    label={`No vote`}
-                                />
-                            </div>
-                            <input type="hidden" id="user-name" value={user.displayName} />
-                            <input type="hidden" id="user-photo" value={user.photoURL} />
-                            <Button type="submit">Vote</Button>
-                        </Form>
-                    </>
+            <h1 style={{marginBottom: '1em'}}>{nomination.data.title}</h1>
+            <iframe
+                title="spotify embed"
+                src={src}
+                width="100%"
+                height="380"
+                frameBorder="0"
+                allowTransparency={true}
+                allow="encrypted-media"
+                style={{marginBottom: '1em'}}
+            />
+            <h2 style={{marginBottom: '.5em'}}>Votes</h2>
+            {votes.length
+                ? <ListGroup style={{marginBottom: '2em'}}>
+                    {votes.map((vote: any) => {
+                        const data: Vote = vote.data();
+                        return <ListGroup.Item>
+                            <img width="34" style={{marginRight: '.5em'}} src={data.user.avatarUrl} alt="User" />
+                            {data.user.name}
+                            <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
+                        </ListGroup.Item>
+                    })}
+                    <ListGroup.Item>
+                        <strong>Total</strong>
+                        <Badge style={{float: 'right'}} variant="primary">{nomination.points}</Badge>
+                    </ListGroup.Item>
+                </ListGroup>
+                : <div style={{marginBottom: '1em'}}>No votes yet</div>}
+            <h2 style={{marginBottom: '.5em'}}>Your Vote</h2>
+            <Form onSubmit={handleSubmit}>
+                <div onChange={(e) => {
+                    //@ts-ignore
+                    setUserVote(e.target.value)
                 }}
-            </FirebaseAuthConsumer>
+                style={{marginBottom: '1em'}}
+                >
+                    {Object.keys(round.votSchema).map((key: string) => {
+                        return <Form.Check 
+                            type='radio'
+                            name={`vote`}
+                            value={`${key}`}
+                            id={`asdfasdf-${key}`}
+                            //@ts-ignore
+                            label={`${key} Point`}
+                        />
+                    })}
+                    <Form.Check 
+                        type='radio'
+                        name={`vote`}
+                        value={`0`}
+                        id={`asdfasdf-0`}
+                        //@ts-ignore
+                        label={`No vote`}
+                    />
+                </div>
+                <input type="hidden" id="user-name" value={user?.displayName || ''} />
+                <input type="hidden" id="user-photo" value={user?.photoURL || ''} />
+                <input type="hidden" id="user-uid" value={user?.uid || ''} />
+                <Button type="submit">Vote</Button>
+            </Form>
         </>
     )
 }

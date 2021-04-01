@@ -1,19 +1,36 @@
 import firebase from 'firebase';
-import { FirebaseAuthConsumer } from '@react-firebase/auth';
 import { Redirect } from 'react-router-dom';
 import routes from '../routes';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from 'react-bootstrap';
+import { AuthContext } from '../Providers/Auth';
 
 const AuthPage:React.FC = () => {
+    const {
+        isAuthed,
+        isAuthLoading,
+        authedFirebaseUser,
+    } = useContext(AuthContext);
+
+    if (isAuthLoading) {
+        return <>Loading</>
+    }
+
+    if (isAuthed) {
+        console.log(authedFirebaseUser)
+        return <Redirect to={routes.roundList.path} />;
+    }
+
     return (
         <>
             <Button
                 onClick={() => {
-                const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-                firebase.auth().signInWithPopup(googleAuthProvider);
+                    const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+                    firebase.auth().signInWithPopup(googleAuthProvider);
                 }}
-            >Sign In With Google</Button>
+            >
+                Sign In With Google
+            </Button>
             {/* <button
             onClick={() => {
                 firebase.auth().signOut();
@@ -21,13 +38,6 @@ const AuthPage:React.FC = () => {
             >
             Sign Out
             </button> */}
-            <FirebaseAuthConsumer>
-            {({ isSignedIn, user, providerId }) => {
-                if (isSignedIn) {
-                    return <Redirect to={routes.roundList.path} />;
-                }
-            }}
-            </FirebaseAuthConsumer>
         </>
     );
 };

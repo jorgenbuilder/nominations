@@ -23,7 +23,6 @@ const RoundCreatePage:React.FC = () => {
             },
             votSchema: JSON.parse(votingRules)
         };
-        console.log(data)
         db.collection('rounds').add(data)
         .then(() => setComplete(true))
     };
