@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 import routes from './routes';
 import PrivateRoute from './Components/PrivateRoute';
+import Logo from './assets/logo.svg';
 
 const App:React.FC = () => {
   const Routes = Object.values(routes).map(conf => {
@@ -16,6 +17,9 @@ const App:React.FC = () => {
   });
   return (
     <FirebaseAuthProvider firebase={firebase} {...firebaseConfig}>
+      <div>
+        <img alt="Logo" style={{margin: '2em auto', display: 'block'}} src={Logo} />
+      </div>
       <Router>
         <Switch>
           {Routes}

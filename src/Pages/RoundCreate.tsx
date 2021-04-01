@@ -1,5 +1,6 @@
 import { FormEventHandler, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import { Redirect } from 'react-router';
 import { db } from '../firebase';
 import { Round, NomSchema } from '../Models';
 
@@ -9,6 +10,7 @@ const RoundCreatePage:React.FC = () => {
     const [type, setType] = useState<NomSchema['type']>('song');
     const [count, setCount] = useState<NomSchema['count']>(0);
     const [votingRules, setVotingRules] = useState<string>('{"3": 1, "2": 2, "1": 2}');
+    const [complete, setComplete] = useState<boolean>(false);
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
@@ -22,9 +24,13 @@ const RoundCreatePage:React.FC = () => {
             votSchema: JSON.parse(votingRules)
         };
         console.log(data)
-        db.collection('nominations').add(data)
-        .then(console.log)
+        db.collection('rounds').add(data)
+        .then(() => setComplete(true))
     };
+
+    if (complete) {
+        return <Redirect to={'/rounds'} />
+    }
 
     return (
         <>

@@ -1,14 +1,17 @@
 interface Nomination {
     type: 'song' | 'album';
     data: SongData | AlbumData;
-    votes: Vote[];
+    votes?: Vote[];
+    points?: number;
 }
 
 interface SongData {
+    title: string;
     spotifyURI: string;
 }
 
 interface AlbumData {
+    title: string;
     spotifyURI: string;
 }
 
@@ -45,4 +48,6 @@ export type {
     Round,
     VotSchema,
     NomSchema,
+    Vote,
+    User,
 }

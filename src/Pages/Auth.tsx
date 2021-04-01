@@ -1,34 +1,31 @@
 import firebase from 'firebase';
 import { FirebaseAuthConsumer } from '@react-firebase/auth';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import routes from '../routes';
+import React from 'react';
+import { Button } from 'react-bootstrap';
 
 const AuthPage:React.FC = () => {
     return (
         <>
-            <button
+            <Button
                 onClick={() => {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
                 firebase.auth().signInWithPopup(googleAuthProvider);
                 }}
-            >Sign In With Google</button>
-            <button
+            >Sign In With Google</Button>
+            {/* <button
             onClick={() => {
                 firebase.auth().signOut();
             }}
             >
             Sign Out
-            </button>
-            <Link
-                to={routes.roundList.path}
-            >Rounds</Link>
+            </button> */}
             <FirebaseAuthConsumer>
             {({ isSignedIn, user, providerId }) => {
-                return (
-                <pre style={{ height: 300, overflow: "auto" }}>
-                    {JSON.stringify({ isSignedIn, user, providerId }, null, 2)}
-                </pre>
-                );
+                if (isSignedIn) {
+                    return <Redirect to={routes.roundList.path} />;
+                }
             }}
             </FirebaseAuthConsumer>
         </>

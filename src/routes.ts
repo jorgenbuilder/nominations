@@ -26,6 +26,16 @@ const routes: {[key: string]: RouteConfig} = {
         component: AuthPage,
         private: false,
     },
+    nominationCreate: {
+        path: '/rounds/:roundId/nomination/create',
+        component: NominationCreatePage,
+        private: true,
+    },
+    nominationDetail: {
+        path: '/rounds/:roundId/nomination/:nominationId',
+        component: NominationPage,
+        private: true,
+    },
     roundCreate: {
         path: '/rounds/create',
         component: RoundCreatePage,
@@ -39,16 +49,6 @@ const routes: {[key: string]: RouteConfig} = {
     roundList: {
         path: '/rounds',
         component: RoundListPage,
-        private: true,
-    },
-    nominationCreate: {
-        path: '/nomination/create',
-        component: NominationCreatePage,
-        private: true,
-    },
-    nominationDetail: {
-        path: '/nomination/:nominationId',
-        component: NominationPage,
         private: true,
     },
     notFound: {

@@ -1,4 +1,3 @@
-import { InitializeAppArgs } from '@react-firebase/auth/dist/types';
 import firebase from 'firebase';
 
 const firebaseConfig = {

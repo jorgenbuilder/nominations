@@ -10,7 +10,7 @@ const RoundListPage:React.FC = () => {
     const [rounds, setRounds] = useState<any>(null);
     
     useEffect(() => {
-        db.collection('nominations').get()
+        db.collection('rounds').get()
         .then((collection) => {
             setRounds(collection.docs);
             setLoading(false);
@@ -28,7 +28,7 @@ const RoundListPage:React.FC = () => {
         ? <ListGroup>
             {rounds.map((round: any) => {
                 const data: Round = round.data();
-                return <ListGroup.Item>
+                return <ListGroup.Item key={round.id}>
                     <Link to={`/rounds/${round.id}`}>{data.name}</Link>
                 </ListGroup.Item>
             })}
