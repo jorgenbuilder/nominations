@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ListGroup } from 'react-bootstrap';
+import { Button, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { Round } from '../Models';
@@ -39,9 +39,9 @@ const RoundListPage:React.FC = () => {
         <>
             <h1>Nomination Rounds</h1>
             {roundsDOM}
-            <p>
-                <Link to={routes.roundCreate.path}>Create a nomination round</Link>
-            </p>
+            <Link to={routes.roundCreate.path}>
+                <Button>Create a nomination round</Button>
+            </Link>
         </>
     );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, ListGroup } from 'react-bootstrap';
+import { Badge, Button, ListGroup } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
@@ -56,16 +56,18 @@ const RoundDetailPage:React.FC = () => {
                         {nominations.map((nomination: any) => {
                             const data: Nomination = nomination.data();
                             return <ListGroup.Item key={nomination.id}>
-                                <Link to={`/rounds/${roundId}/nomination/${nomination.id}`}>{data.data.title}</Link>
-                                <Badge variant="primary">{data.points}</Badge>
+                                <Link to={`/rounds/${roundId}/nomination/${nomination.id}`} style={{display: 'block'}}>
+                                    {data.data.title}
+                                    <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
+                                </Link>
                             </ListGroup.Item>
                         })}
                     </ListGroup>
                     : 'No nominations yet!'
             }
-            <p>
-                <Link to={`/rounds/${roundId}/nomination/create`}>Nominate a {round.nomSchema.type}</Link>
-            </p>
+            <Link to={`/rounds/${roundId}/nomination/create`}>
+                <Button>Nominate a {round.nomSchema.type}</Button>
+            </Link>
         </>
     )
 }
