@@ -5,6 +5,7 @@ import { Badge, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round, Vote } from '../Models';
+import LoadingPage from './Loading';
 
 const NominationPage:React.FC = () => {
     const { authedFirebaseUser: user } = useContext(AuthContext);
@@ -65,9 +66,7 @@ const NominationPage:React.FC = () => {
     }
 
     if (loading || !round || !nomination) {
-        return <>
-            <p>Loading...</p>
-        </>;
+        return <LoadingPage />;
     }
 
     const [, entity, id] = nomination.data.spotifyURI.split(':');

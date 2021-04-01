@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round } from '../Models';
+import LoadingPage from './Loading';
 
 const RoundDetailPage:React.FC = () => {
     const { roundId } = useParams<{roundId: string}>();
@@ -27,10 +28,8 @@ const RoundDetailPage:React.FC = () => {
         });
     }, [roundId]);
 
-    if (loading || !round) {
-        return <>
-            <p>Loading...</p>
-        </>;
+    if (loading || !round || loadingNominations) {
+        return <LoadingPage />;
     }
 
     return (
@@ -49,21 +48,19 @@ const RoundDetailPage:React.FC = () => {
             </ul>
 
             <h2 style={{marginBottom: '.5em'}}>Nominations</h2>
-            {loadingNominations
-                ? 'Loading...'
-                : nominations.length
-                    ? <ListGroup style={{marginBottom: '1em'}}>
-                        {nominations.map((nomination: any) => {
-                            const data: Nomination = nomination.data();
-                            return <ListGroup.Item key={nomination.id}>
-                                <Link to={`/rounds/${roundId}/nomination/${nomination.id}`} style={{display: 'block'}}>
-                                    {data.data.title}
-                                    <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
-                                </Link>
-                            </ListGroup.Item>
-                        })}
-                    </ListGroup>
-                    : 'No nominations yet!'
+            {nominations.length
+                ? <ListGroup style={{marginBottom: '1em'}}>
+                    {nominations.map((nomination: any) => {
+                        const data: Nomination = nomination.data();
+                        return <ListGroup.Item key={nomination.id}>
+                            <Link to={`/rounds/${roundId}/nomination/${nomination.id}`} style={{display: 'block'}}>
+                                {data.data.title}
+                                <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
+                            </Link>
+                        </ListGroup.Item>
+                    })}
+                </ListGroup>
+                : 'No nominations yet!'
             }
             <Link to={`/rounds/${roundId}/nomination/create`}>
                 <Button>Nominate a {round.nomSchema.type}</Button>

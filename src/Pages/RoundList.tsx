@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { Round } from '../Models';
 import routes from '../routes';
+import LoadingPage from './Loading';
 
 const RoundListPage:React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -18,10 +19,7 @@ const RoundListPage:React.FC = () => {
     }, []);
 
     if (loading) {
-        return <>
-            <h1>Nomination Rounds</h1>
-            <p>Loading...</p>
-        </>;
+        return <LoadingPage />;
     }
 
     const roundsDOM = (rounds.length)

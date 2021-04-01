@@ -8,16 +8,9 @@ import { AuthContext } from '../Providers/Auth';
 const AuthPage:React.FC = () => {
     const {
         isAuthed,
-        isAuthLoading,
-        authedFirebaseUser,
     } = useContext(AuthContext);
 
-    if (isAuthLoading) {
-        return <>Loading</>
-    }
-
     if (isAuthed) {
-        console.log(authedFirebaseUser)
         return <Redirect to={routes.roundList.path} />;
     }
 
