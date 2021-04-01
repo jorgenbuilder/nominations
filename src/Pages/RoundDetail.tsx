@@ -20,7 +20,7 @@ const RoundDetailPage:React.FC = () => {
             setRound(data);
             setLoading(false);
         });
-        db.collection('rounds').doc(roundId).collection('nominations').get()
+        db.collection('rounds').doc(roundId).collection('nominations').orderBy('points', 'desc').get()
         .then((nominations) => {
             setNominations(nominations.docs);
             setLoadingNominations(false);
