@@ -120,6 +120,14 @@ const NominationPage:React.FC = () => {
                                         label={`${key} Point`}
                                     />
                                 })}
+                                <Form.Check 
+                                    type='radio'
+                                    name={`vote`}
+                                    value={`0`}
+                                    id={`asdfasdf-0`}
+                                    //@ts-ignore
+                                    label={`No vote`}
+                                />
                             </div>
                             <input type="hidden" id="user-name" value={user.displayName} />
                             <input type="hidden" id="user-photo" value={user.photoURL} />
