@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import { AuthContext } from '../Providers/Auth';
-import React, { FormEventHandler, useContext, useEffect, useState } from 'react';
+import React, { FormEventHandler, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import { Badge, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
@@ -15,14 +15,21 @@ const NominationPage:React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [round, setRound] = useState<Round>();
     const [nomination, setNomination] = useState<Nomination>();
-    const [votes, setVotes] = useState<any>();
+    const [votes, setVotes] = useState<firebase.firestore.QueryDocumentSnapshot<Vote>[]>();
     const [userVote, setUserVote] = useState<any>();
     const [complete, setComplete] = useState<boolean>(false);
+
+    const userExistingVote = votes?.find((x: any) => x.data().user.name === user?.displayName);
+
+    console.log(votes);
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
         if (!user) {
             throw new Error('Can\'t vote; no user');
+        }
+        if (userExistingVote) {
+            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
         }
         const data: Vote = {
             points: userVote,
@@ -32,10 +39,6 @@ const NominationPage:React.FC = () => {
                 avatarUrl: user.photoURL || '',
             }
         };
-        const userExistingVote = votes.find((x: any) => x.data().user.name === user.displayName)
-        if (userExistingVote) {
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
-        }
         Promise.all([
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).update({
                 points: firebase.firestore.FieldValue.increment(userExistingVote ? userVote - userExistingVote.data().points : userVote)
@@ -43,6 +46,23 @@ const NominationPage:React.FC = () => {
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').add(data),
         ])
         .then(() => setComplete(true));
+    }
+
+    const handleDeleteVote:MouseEventHandler = (e) => {
+        e.preventDefault();
+        if (userExistingVote) {
+            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
+            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).update({
+                points: firebase.firestore.FieldValue.increment(0 - userExistingVote.data().points)
+            });
+            if (votes) {
+                let v = [...votes];
+                const i = v.indexOf(userExistingVote);
+                v.splice(i, 1);
+                console.log(i, v);
+                setVotes(v);
+            }
+        }
     }
 
     useEffect(() => {
@@ -57,7 +77,9 @@ const NominationPage:React.FC = () => {
             //@ts-ignore
             const nominationData: Nomination = nominationDoc.data();
             setNomination(nominationData);
+            //@ts-ignore
             setVotes(votes.docs);
+            setUserVote(votes.docs.find((x: any) => x.data().user.name === user?.displayName)?.data()?.points);
             setLoading(false);
         })
     }, [roundId, nominationId]);
@@ -92,19 +114,22 @@ const NominationPage:React.FC = () => {
                 ? <p>Nominated by {nomination.user.name}</p>
                 : ''}
             <h2 style={{marginBottom: '.5em'}}>Votes</h2>
-            {votes.length
+            {votes?.length
                 ? <ListGroup style={{marginBottom: '2em'}}>
                     {votes.map((vote: any) => {
                         const data: Vote = vote.data();
                         return <ListGroup.Item>
                             <img width="34" style={{marginRight: '.5em'}} src={data.user.avatarUrl} alt="User" />
-                            {data.user.name}
+                            {data.user.name} 
+                            {vote === userExistingVote
+                            ? <a href="#" style={{marginLeft: '1em'}} onClick={handleDeleteVote}>Delete</a>
+                            : ''}
                             <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
                         </ListGroup.Item>
                     })}
                     <ListGroup.Item>
                         <strong>Total</strong>
-                        <Badge style={{float: 'right'}} variant="primary">{nomination.points}</Badge>
+                        <Badge style={{float: 'right'}} variant="primary">{votes.reduce((prev: number, curr, i) => prev + parseInt(`${curr.data().points}`), 0)}</Badge>
                     </ListGroup.Item>
                 </ListGroup>
                 : <div style={{marginBottom: '1em'}}>No votes yet</div>}
@@ -121,23 +146,13 @@ const NominationPage:React.FC = () => {
                             type='radio'
                             name={`vote`}
                             value={`${key}`}
+                            defaultChecked={userVote === `${key}`}
                             id={`asdfasdf-${key}`}
                             //@ts-ignore
                             label={`${key} Point`}
                         />
                     })}
-                    <Form.Check 
-                        type='radio'
-                        name={`vote`}
-                        value={`0`}
-                        id={`asdfasdf-0`}
-                        //@ts-ignore
-                        label={`No vote`}
-                    />
                 </div>
-                <input type="hidden" id="user-name" value={user?.displayName || ''} />
-                <input type="hidden" id="user-photo" value={user?.photoURL || ''} />
-                <input type="hidden" id="user-uid" value={user?.uid || ''} />
                 <Button type="submit">Vote</Button>
             </Form>
         </Page>
