@@ -92,7 +92,7 @@ const NominationPage:React.FC = () => {
                             allowTransparency={true}
                             allow="encrypted-media"
                         />
-                        <h2>Votes</h2>
+                        <h2>Votes ({nomination.points} Points)</h2>
                         {votes.length
                             ? <ul>
                                 {votes.map((vote: any) => {
