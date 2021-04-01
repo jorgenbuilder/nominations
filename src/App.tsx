@@ -17,7 +17,7 @@ const App:React.FC = () => {
     return conf.private ? <PrivateRoute {...conf} key={conf.path} /> : <Route {...conf} key={conf.path} />;
   });
   return (
-    <Container style={{maxWidth: '600px'}}>
+    <Container style={{maxWidth: '600px', marginBottom: '2em'}}>
       <FirebaseAuthProvider firebase={firebase} {...firebaseConfig}>
         <div>
           <img alt="Logo" style={{margin: '2em auto', display: 'block'}} src={Logo} />

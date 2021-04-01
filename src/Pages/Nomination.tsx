@@ -109,7 +109,7 @@ const NominationPage:React.FC = () => {
                                     <Badge style={{float: 'right'}} variant="primary">{nomination.points}</Badge>
                                 </ListGroup.Item>
                             </ListGroup>
-                            : "No votes yet"}
+                            : <div style={{marginBottom: '1em'}}>No votes yet</div>}
                         <h2 style={{marginBottom: '.5em'}}>Your Vote</h2>
                         <Form onSubmit={handleSubmit}>
                             <div onChange={(e) => {
