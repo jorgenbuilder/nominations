@@ -25,7 +25,7 @@ const RoundListPage:React.FC = () => {
     }
 
     const roundsDOM = (rounds.length)
-        ? <ListGroup>
+        ? <ListGroup style={{marginBottom: '1em'}}>
             {rounds.map((round: any) => {
                 const data: Round = round.data();
                 return <ListGroup.Item key={round.id}>
@@ -37,7 +37,7 @@ const RoundListPage:React.FC = () => {
 
     return (
         <>
-            <h1>Nomination Rounds</h1>
+            <h1 style={{marginBottom: '1em'}}>Nomination Rounds</h1>
             {roundsDOM}
             <Link to={routes.roundCreate.path}>
                 <Button>Create a nomination round</Button>

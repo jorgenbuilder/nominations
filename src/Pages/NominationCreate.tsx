@@ -22,7 +22,6 @@ const NominationCreatePage:React.FC = () => {
             },
             points: 0,
         };
-        console.log(data)
         db.collection('rounds').doc(roundId).collection('nominations').add(data)
         .then(() => setComplete(true))
     };
@@ -42,7 +41,7 @@ const NominationCreatePage:React.FC = () => {
                 <Form.Label>
                     Spotify URL
                 </Form.Label>
-                <Form.Control value={spotifyURI} onChange={(e) => setSpotifyURI(e.currentTarget.value)} type="text" />
+                <Form.Control style={{marginBottom: '1em'}} value={spotifyURI} onChange={(e) => setSpotifyURI(e.currentTarget.value)} type="text" />
                 <Button variant="primary" type="submit">
                     Create
                 </Button>

@@ -57,7 +57,7 @@ const RoundCreatePage:React.FC = () => {
                 <Form.Label>
                     Voting Rules
                 </Form.Label>
-                <Form.Control value={votingRules} onChange={(e) => setVotingRules(e.currentTarget.value)} as="textarea" rows={3} />
+                <Form.Control style={{marginBottom: '1em'}} value={votingRules} onChange={(e) => setVotingRules(e.currentTarget.value)} as="textarea" rows={3} />
                 <Button variant="primary" type="submit">
                     Create
                 </Button>

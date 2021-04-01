@@ -35,10 +35,10 @@ const RoundDetailPage:React.FC = () => {
 
     return (
         <>
-            <h1>{round.name}</h1>
+            <h1 style={{marginBottom: '1em'}}>{round.name}</h1>
 
             <h2>The Rules</h2>
-            <ul>
+            <ul style={{marginBottom: '1em'}}>
                 <li>Nominate up to {round.nomSchema.count} {round.nomSchema.type}s</li>
                 <li>Everyone gets {Object.keys(round.votSchema).map(key => {
                     const points = key;
@@ -48,11 +48,11 @@ const RoundDetailPage:React.FC = () => {
                 }).join(', ')}.</li>
             </ul>
 
-            <h2>Nominations</h2>
+            <h2 style={{marginBottom: '.5em'}}>Nominations</h2>
             {loadingNominations
                 ? 'Loading...'
                 : nominations.length
-                    ? <ListGroup>
+                    ? <ListGroup style={{marginBottom: '1em'}}>
                         {nominations.map((nomination: any) => {
                             const data: Nomination = nomination.data();
                             return <ListGroup.Item key={nomination.id}>

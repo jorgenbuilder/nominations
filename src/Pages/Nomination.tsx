@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import { FirebaseAuthConsumer } from '@react-firebase/auth';
-import { FormEventHandler, useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import React, { FormEventHandler, useEffect, useState } from 'react';
+import { Badge, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round, Vote } from '../Models';
@@ -82,34 +82,42 @@ const NominationPage:React.FC = () => {
             <FirebaseAuthConsumer>
                 {({ user }) => {
                     return <>
-                        <h1>{nomination.data.title}</h1>
+                        <h1 style={{marginBottom: '1em'}}>{nomination.data.title}</h1>
                         <iframe
                             title="spotify embed"
                             src={src}
-                            width="300"
+                            width="100%"
                             height="380"
                             frameBorder="0"
                             allowTransparency={true}
                             allow="encrypted-media"
+                            style={{marginBottom: '1em'}}
                         />
-                        <h2>Votes ({nomination.points} Points)</h2>
+                        <h2 style={{marginBottom: '.5em'}}>Votes</h2>
                         {votes.length
-                            ? <ul>
+                            ? <ListGroup style={{marginBottom: '2em'}}>
                                 {votes.map((vote: any) => {
                                     const data: Vote = vote.data();
-                                    return <li>
-                                        <img src={data.user.avatarUrl} alt="User" />
-                                        {data.user.name} voted {data.points}
-                                    </li>
+                                    return <ListGroup.Item>
+                                        <img width="34" style={{marginRight: '.5em'}} src={data.user.avatarUrl} alt="User" />
+                                        {data.user.name}
+                                        <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
+                                    </ListGroup.Item>
                                 })}
-                            </ul>
+                                <ListGroup.Item>
+                                    <strong>Total</strong>
+                                    <Badge style={{float: 'right'}} variant="primary">{nomination.points}</Badge>
+                                </ListGroup.Item>
+                            </ListGroup>
                             : "No votes yet"}
-                        <h2>Your Vote</h2>
+                        <h2 style={{marginBottom: '.5em'}}>Your Vote</h2>
                         <Form onSubmit={handleSubmit}>
                             <div onChange={(e) => {
                                 //@ts-ignore
                                 setUserVote(e.target.value)
-                            }}>
+                            }}
+                            style={{marginBottom: '1em'}}
+                            >
                                 {Object.keys(round.votSchema).map((key: string) => {
                                     return <Form.Check 
                                         type='radio'
