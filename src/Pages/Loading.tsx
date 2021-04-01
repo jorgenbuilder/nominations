@@ -1,5 +1,4 @@
-import { Container, Spinner } from 'react-bootstrap'
-import Logo from '../assets/logo.svg';
+import { Spinner } from 'react-bootstrap'
 
 const LoadingPage:React.FC = () => {
     return (

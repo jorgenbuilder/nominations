@@ -4,12 +4,15 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AuthProvider from './Providers/Auth';
+import { AnimatePresence } from 'framer-motion';
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
-      </AuthProvider>
+      <AnimatePresence exitBeforeEnter>
+        <App />
+      </AnimatePresence>
+    </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

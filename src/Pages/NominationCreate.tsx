@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination } from '../Models';
+import Page from './_Base';
 
 const NominationCreatePage:React.FC = () => {
 
@@ -31,7 +32,7 @@ const NominationCreatePage:React.FC = () => {
     }
 
     return (
-        <>
+        <Page>
             <h1>New Nomination</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Label>
@@ -46,7 +47,7 @@ const NominationCreatePage:React.FC = () => {
                     Create
                 </Button>
             </Form>
-        </>
+        </Page>
     )
 }
 

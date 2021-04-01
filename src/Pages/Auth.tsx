@@ -4,6 +4,7 @@ import routes from '../routes';
 import React, { useContext } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../Providers/Auth';
+import Page from './_Base';
 
 const AuthPage:React.FC = () => {
     const {
@@ -15,7 +16,7 @@ const AuthPage:React.FC = () => {
     }
 
     return (
-        <>
+        <Page>
             <Button
                 onClick={() => {
                     const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
@@ -31,7 +32,7 @@ const AuthPage:React.FC = () => {
             >
             Sign Out
             </button> */}
-        </>
+        </Page>
     );
 };
 

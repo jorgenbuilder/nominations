@@ -5,6 +5,7 @@ import { db } from '../firebase';
 import { Round } from '../Models';
 import routes from '../routes';
 import LoadingPage from './Loading';
+import Page from './_Base';
 
 const RoundListPage:React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -34,13 +35,13 @@ const RoundListPage:React.FC = () => {
         : <>No rounds yet!</>;
 
     return (
-        <>
+        <Page>
             <h1 style={{marginBottom: '1em'}}>Nomination Rounds</h1>
             {roundsDOM}
             <Link to={routes.roundCreate.path}>
                 <Button>Create a nomination round</Button>
             </Link>
-        </>
+        </Page>
     );
 }
 

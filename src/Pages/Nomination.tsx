@@ -6,6 +6,7 @@ import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round, Vote } from '../Models';
 import LoadingPage from './Loading';
+import Page from './_Base';
 
 const NominationPage:React.FC = () => {
     const { authedFirebaseUser: user } = useContext(AuthContext);
@@ -75,7 +76,7 @@ const NominationPage:React.FC = () => {
         : `https://open.spotify.com/embed/${entity}/${id}`;
     
     return (
-        <>
+        <Page>
             <h1 style={{marginBottom: '1em'}}>{nomination.data.title}</h1>
             <iframe
                 title="spotify embed"
@@ -136,7 +137,7 @@ const NominationPage:React.FC = () => {
                 <input type="hidden" id="user-uid" value={user?.uid || ''} />
                 <Button type="submit">Vote</Button>
             </Form>
-        </>
+        </Page>
     )
 }
 

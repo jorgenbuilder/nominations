@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round } from '../Models';
 import LoadingPage from './Loading';
+import Page from './_Base';
 
 const RoundDetailPage:React.FC = () => {
     const { roundId } = useParams<{roundId: string}>();
@@ -33,7 +34,7 @@ const RoundDetailPage:React.FC = () => {
     }
 
     return (
-        <>
+        <Page>
             <h1 style={{marginBottom: '1em'}}>{round.name}</h1>
 
             <h2>The Rules</h2>
@@ -65,7 +66,7 @@ const RoundDetailPage:React.FC = () => {
             <Link to={`/rounds/${roundId}/nomination/create`}>
                 <Button>Nominate a {round.nomSchema.type}</Button>
             </Link>
-        </>
+        </Page>
     )
 }
 

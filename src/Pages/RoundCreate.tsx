@@ -3,6 +3,7 @@ import { Button, Form } from 'react-bootstrap';
 import { Redirect } from 'react-router';
 import { db } from '../firebase';
 import { Round, NomSchema } from '../Models';
+import Page from './_Base';
 
 const RoundCreatePage:React.FC = () => {
 
@@ -32,7 +33,7 @@ const RoundCreatePage:React.FC = () => {
     }
 
     return (
-        <>
+        <Page>
             <h1>Create A Round</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Label>
@@ -61,7 +62,7 @@ const RoundCreatePage:React.FC = () => {
                     Create
                 </Button>
             </Form>
-        </>
+        </Page>
     )
 }
 
