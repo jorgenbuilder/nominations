@@ -10,7 +10,7 @@ import {
 import routes from './routes';
 
 const App:React.FC = () => {
-  const Routes = routes.map(conf => <Route {...conf} />);
+  const Routes = Object.values(routes).map(conf => <Route {...conf} />);
   return (
     <FirebaseAuthProvider firebase={firebase} {...firebaseConfig}>
       <Router>
