@@ -1,5 +1,7 @@
 import firebase from 'firebase';
 import { FirebaseAuthConsumer } from '@react-firebase/auth';
+import { Link } from 'react-router-dom';
+import routes from '../routes';
 
 const AuthPage:React.FC = () => {
     return (
@@ -17,6 +19,9 @@ const AuthPage:React.FC = () => {
             >
             Sign Out
             </button>
+            <Link
+                to={routes.roundList.path}
+            >Rounds</Link>
             <FirebaseAuthConsumer>
             {({ isSignedIn, user, providerId }) => {
                 return (
