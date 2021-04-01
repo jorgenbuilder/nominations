@@ -71,6 +71,11 @@ const NominationPage:React.FC = () => {
 
     const [_, entity, id] = nomination.data.spotifyURI.split(':');
     console.log(`I didn't use ${_}.`)
+
+    console.log(nomination.data.spotifyURI.indexOf('spotify.com'));
+    const src = nomination.data.spotifyURI.indexOf('spotify.com') > -1
+        ? nomination.data.spotifyURI.replace('.com/', '.com/embed/')
+        : `https://open.spotify.com/embed/${entity}/${id}`;
     
     return (
         <>
@@ -80,7 +85,7 @@ const NominationPage:React.FC = () => {
                         <h1>{nomination.data.title}</h1>
                         <iframe
                             title="spotify embed"
-                            src={`https://open.spotify.com/embed/${entity}/${id}`}
+                            src={src}
                             width="300"
                             height="380"
                             frameBorder="0"
