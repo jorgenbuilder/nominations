@@ -88,6 +88,9 @@ const NominationPage:React.FC = () => {
                 allow="encrypted-media"
                 style={{marginBottom: '1em'}}
             />
+            {nomination.user
+                ? <p>Nominated by {nomination.user.name}</p>
+                : ''}
             <h2 style={{marginBottom: '.5em'}}>Votes</h2>
             {votes.length
                 ? <ListGroup style={{marginBottom: '2em'}}>

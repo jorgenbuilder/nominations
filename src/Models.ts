@@ -3,6 +3,7 @@ interface Nomination {
     data: SongData | AlbumData;
     votes?: Vote[];
     points?: number;
+    user: User;
 }
 
 interface SongData {

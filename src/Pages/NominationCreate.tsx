@@ -1,20 +1,26 @@
-import React, { FormEventHandler, useState } from 'react';
+import React, { FormEventHandler, useContext, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination } from '../Models';
+import { AuthContext } from '../Providers/Auth';
 import Page from './_Base';
 
 const NominationCreatePage:React.FC = () => {
 
     const { roundId } = useParams<{roundId: string}>()
+    const { authedFirebaseUser: user } = useContext(AuthContext);
+
     const [title, setTitle] = useState<string>('');
     const [spotifyURI, setSpotifyURI] = useState<string>('');
     const [complete, setComplete] = useState<boolean>(false);
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
+        if (!user) {
+            throw new Error(`Can't create nomination; no user`)
+        }
         const data: Nomination = {
             type: 'song',  // TODO
             data: {
@@ -22,6 +28,11 @@ const NominationCreatePage:React.FC = () => {
                 spotifyURI,
             },
             points: 0,
+            user: {
+                uid: user.uid,
+                name: user.displayName || '???',
+                avatarUrl: user.photoURL || '',
+            }
         };
         db.collection('rounds').doc(roundId).collection('nominations').add(data)
         .then(() => setComplete(true))
