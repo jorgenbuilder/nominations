@@ -1,21 +1,26 @@
-import { useEffect, useState } from 'react';
-import { db } from './firebase';
+import { firebaseConfig } from './firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import { FirebaseAuthProvider } from '@react-firebase/auth';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from 'react-router-dom';
+import routes from './routes';
 
 const App:React.FC = () => {
-
-  const [test, setTest] = useState<any>(null);
-  
-  useEffect(() => {
-    db.collection('test').doc('test').get()
-    .then(setTest);
-  }, []);
-
-  console.log(test);
+  const Routes = routes.map(conf => <Route {...conf} />);
   return (
-    <>
-      Hello.
-    </>
+    <FirebaseAuthProvider firebase={firebase} {...firebaseConfig}>
+      <Router>
+        <Switch>
+          {Routes}
+        </Switch>
+      </Router>
+    </FirebaseAuthProvider>
   )
 }
-
+  
 export default App;
+  

@@ -1,3 +1,4 @@
+import { InitializeAppArgs } from '@react-firebase/auth/dist/types';
 import firebase from 'firebase';
 
 const firebaseConfig = {
@@ -7,10 +8,11 @@ const firebaseConfig = {
     storageBucket: "alaja-c3481.appspot.com",
     messagingSenderId: "396042941487",
     appId: "1:396042941487:web:7441a0b6a7efcbc48a02da",
-    measurementId: "G-QGMEH58DHY"
+    measurementId: "G-QGMEH58DHY",
+    databaseURL: ""
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const db = firebaseApp.firestore();
 
-export { db };
+export { firebaseConfig, db };
