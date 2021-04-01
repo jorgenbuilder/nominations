@@ -93,7 +93,7 @@ const NominationPage:React.FC = () => {
                                 {votes.map((vote: any) => {
                                     const data: Vote = vote.data();
                                     return <li>
-                                        <img src={data.user.avatarUrl} alt="User photo" />
+                                        <img src={data.user.avatarUrl} alt="User" />
                                         {data.user.name} voted {data.points}
                                     </li>
                                 })}
