@@ -5,12 +5,10 @@ import routes from '../routes';
 
 const PrivateRoute:React.FC<RouteProps> = (props) => {
     const { component: Component, ...rest } = props;
-    console.log('Private', Component, props)
     if (!Component) return <></>;
     return (
         <FirebaseAuthConsumer>
             {({ isSignedIn }) => {
-                console.log(isSignedIn);
                 return <Route {...rest}
                     render={
                         (props) => {

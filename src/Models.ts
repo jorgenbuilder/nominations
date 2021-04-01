@@ -13,10 +13,11 @@ interface AlbumData {
 }
 
 interface Round {
+    name: string;
     status: 'live' | 'archive';
     nomSchema: NomSchema;
     votSchema: VotSchema;
-    nominations: Nomination[];
+    nominations?: Nomination[];
 }
 
 interface VotSchema {
