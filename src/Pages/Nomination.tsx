@@ -21,8 +21,6 @@ const NominationPage:React.FC = () => {
 
     const userExistingVote = votes?.find((x: any) => x.data().user.name === user?.displayName);
 
-    console.log(votes);
-
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
         if (!user) {
@@ -82,7 +80,7 @@ const NominationPage:React.FC = () => {
             setUserVote(votes.docs.find((x: any) => x.data().user.name === user?.displayName)?.data()?.points);
             setLoading(false);
         })
-    }, [roundId, nominationId]);
+    }, [roundId, nominationId, user?.displayName]);
 
     if (complete) {
         return <Redirect to={`/rounds/${roundId}/`} />;
@@ -122,7 +120,7 @@ const NominationPage:React.FC = () => {
                             <img width="34" style={{marginRight: '.5em'}} src={data.user.avatarUrl} alt="User" />
                             {data.user.name} 
                             {vote === userExistingVote
-                            ? <a href="#" style={{marginLeft: '1em'}} onClick={handleDeleteVote}>Delete</a>
+                            ? <a href="#delete" style={{marginLeft: '1em'}} onClick={handleDeleteVote}>Delete</a>
                             : ''}
                             <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
                         </ListGroup.Item>
