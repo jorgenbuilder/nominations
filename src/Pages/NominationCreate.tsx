@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useContext, useState } from 'react';
+import React, { ChangeEventHandler, FormEventHandler, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import { db } from '../firebase';
@@ -38,15 +38,20 @@ const NominationCreatePage:React.FC = () => {
         .then(() => setComplete(true))
     };
 
-    const handleChange:FormEventHandler = (e) => {
+    const handleChange:ChangeEventHandler<HTMLInputElement> = (e) => {
         e.preventDefault();
+        const handler = e.target?.dataset?.changeProp;
         const handlers = {
             'title': setTitle,
             'spotifyURI': setSpotifyURI,
         };
-        //@ts-ignore
-        // What's the deal with currentTarget.value
-        handlers[this as unknown as keyof typeof handlers](e.currentTarget.value)
+        if (!handler || !(handler in handlers)) {
+            throw new Error(`
+                Unrecognized/missing change handler "${handler}".
+                Allowed values: ${Object.keys(handlers).join(', ')}.
+            `)
+        }
+        handlers[handler as keyof typeof handlers](e.target.value)
     }
 
     if (complete) {

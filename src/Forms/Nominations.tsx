@@ -20,11 +20,22 @@ const NominationForm:React.FC<NominationFormProps> = (props) => {
                 <Form.Label>
                     Title
                 </Form.Label>
-                <Form.Control value={title} onChange={handleChange.bind('title')} type="text" />
+                <Form.Control
+                    value={title}
+                    onChange={handleChange}
+                    data-change-prop='title'
+                    type='text'
+                />
                 <Form.Label>
                     Spotify URL
                 </Form.Label>
-                <Form.Control style={{marginBottom: '1em'}} value={spotifyURI} onChange={handleChange.bind('spotifyURI')} type="text" />
+                <Form.Control
+                    style={{marginBottom: '1em'}}
+                    value={spotifyURI}
+                    onChange={handleChange}
+                    data-change-prop='spotifyURI'
+                    type="text"
+                />
                 <Button variant="primary" type="submit">
                     Create
                 </Button>
