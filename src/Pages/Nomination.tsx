@@ -4,9 +4,11 @@ import React, { FormEventHandler, MouseEventHandler, useContext, useEffect, useS
 import { Badge, Breadcrumb, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
-import { Nomination, Round, Vote } from '../Models';
+import { VotBudget, Nomination, Round, Vote } from '../Models';
 import LoadingPage from './Loading';
 import Page from './_Base';
+import VotBudgetDisplay from '../Components/VotBudget';
+import FirestoreAPI from '../Services/FirestoreAPI';
 
 const NominationPage:React.FC = () => {
     const { authedFirebaseUser: user } = useContext(AuthContext);
@@ -16,18 +18,26 @@ const NominationPage:React.FC = () => {
     const [round, setRound] = useState<Round>();
     const [nomination, setNomination] = useState<Nomination>();
     const [votes, setVotes] = useState<firebase.firestore.QueryDocumentSnapshot<Vote>[]>();
-    const [userVote, setUserVote] = useState<any>();
+    const [userVote, setUserVote] = useState<number>();
     const [complete, setComplete] = useState<boolean>(false);
+    const [votBudget, setVotBudget] = useState<VotBudget>();
 
     const userExistingVote = votes?.find((x: any) => x.data().user.name === user?.displayName);
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
-        if (!user) {
-            throw new Error('Can\'t vote; no user');
+        if (!user || !userVote) {
+            throw new Error('Can\'t vote; no user.');
         }
+        let budgetChange = Object.assign({}, votBudget);
         if (userExistingVote) {
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
+            const key = userExistingVote.data().points;
+            budgetChange[key] = {
+                allowed: budgetChange[key].allowed,
+                used: budgetChange[key].used - 1,
+                remaining: budgetChange[key].remaining + 1,
+            };
         }
         const data: Vote = {
             points: userVote,
@@ -37,38 +47,59 @@ const NominationPage:React.FC = () => {
                 avatarUrl: user.photoURL || '',
             }
         };
+        budgetChange[userVote].used = budgetChange[userVote].used + 1;
+        budgetChange[userVote].remaining = budgetChange[userVote].remaining - 1;
+        setVotBudget(budgetChange);
+        
         Promise.all([
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).update({
                 points: firebase.firestore.FieldValue.increment(userExistingVote ? userVote - userExistingVote.data().points : userVote)
             }),
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').add(data),
+            FirestoreAPI.updateVotBudget(roundId, user.uid, budgetChange),
         ])
         .then(() => setComplete(true));
     }
 
     const handleDeleteVote:MouseEventHandler = (e) => {
         e.preventDefault();
+        if (!user || !votBudget) return;
         if (userExistingVote) {
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).update({
                 points: firebase.firestore.FieldValue.increment(0 - userExistingVote.data().points)
             });
+
+            let budgetChange = Object.assign({}, votBudget);
+            const key = userExistingVote.data().points;
+            budgetChange[key] = {
+                allowed: budgetChange[key].allowed,
+                used: budgetChange[key].used - 1,
+                remaining: budgetChange[key].remaining + 1,
+            };
+            FirestoreAPI.updateVotBudget(roundId, user.uid, budgetChange);
+            setVotBudget(budgetChange);
+
             if (votes) {
                 let v = [...votes];
                 const i = v.indexOf(userExistingVote);
                 v.splice(i, 1);
-                console.log(i, v);
                 setVotes(v);
             }
         }
     }
 
     useEffect(() => {
+        if (!user) {
+            return
+        }
+
         Promise.all([
             db.collection('rounds').doc(roundId).get(),
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).get(),
             db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').get(),
-        ]).then(([roundDoc, nominationDoc, votes]) => {
+            FirestoreAPI.getOrCreateVotBudget(roundId, user.uid),
+        ]).then(([roundDoc, nominationDoc, votes, votBudget]) => {
             //@ts-ignore
             const roundData: Round = roundDoc.data();
             setRound(roundData);
@@ -78,9 +109,11 @@ const NominationPage:React.FC = () => {
             //@ts-ignore
             setVotes(votes.docs);
             setUserVote(votes.docs.find((x: any) => x.data().user.name === user?.displayName)?.data()?.points);
+            setVotBudget(votBudget);
             setLoading(false);
+            document.title = nominationData.data.title
         })
-    }, [roundId, nominationId, user?.displayName]);
+    }, [roundId, nominationId, user]);
 
     if (complete) {
         return <Redirect to={`/rounds/${roundId}/`} />;
@@ -137,6 +170,7 @@ const NominationPage:React.FC = () => {
                 </ListGroup>
                 : <div style={{marginBottom: '1em'}}>No votes yet</div>}
             <h2 style={{marginBottom: '.5em'}}>Your Vote</h2>
+            <VotBudgetDisplay roundId={roundId} />
             <Form onSubmit={handleSubmit}>
                 <div onChange={(e) => {
                     //@ts-ignore
@@ -149,7 +183,7 @@ const NominationPage:React.FC = () => {
                             type='radio'
                             name={`vote`}
                             value={`${key}`}
-                            defaultChecked={userVote === `${key}`}
+                            defaultChecked={`${userVote || ''}` === `${key}`}
                             id={`asdfasdf-${key}`}
                             //@ts-ignore
                             label={`${key} Point`}

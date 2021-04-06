@@ -44,6 +44,22 @@ interface User {
     avatarUrl: string;
 }
 
+interface NomBudget {
+    allowed: number;
+    used: number;
+    remaining: number;
+}
+
+interface VoteBudgetData {
+    allowed: number;
+    used: number;
+    remaining: number;
+};
+
+interface VotBudget {
+    [key: number]: VoteBudgetData;
+}
+
 export type {
     Nomination,
     SongData,
@@ -52,4 +68,7 @@ export type {
     NomSchema,
     Vote,
     User,
+    NomBudget,
+    VotBudget,
+    VoteBudgetData,
 }

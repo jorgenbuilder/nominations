@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useState } from 'react';
+import React, { FormEventHandler, useEffect, useState } from 'react';
 import { Breadcrumb, Button, Form } from 'react-bootstrap';
 import { Redirect } from 'react-router';
 import { db } from '../firebase';
@@ -27,6 +27,10 @@ const RoundCreatePage:React.FC = () => {
         db.collection('rounds').add(data)
         .then(() => setComplete(true))
     };
+
+    useEffect(() => {
+        document.title = 'New Round'
+    }, [])
 
     if (complete) {
         return <Redirect to={'/rounds'} />

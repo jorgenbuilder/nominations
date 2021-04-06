@@ -1,3 +1,4 @@
+import firebase from 'firebase';
 import React, { ChangeEventHandler, FormEventHandler, useContext, useEffect, useState } from 'react';
 import { Breadcrumb } from 'react-bootstrap';
 import { useParams } from 'react-router';
@@ -38,8 +39,12 @@ const NominationCreatePage:React.FC = () => {
                 avatarUrl: user.photoURL || '',
             }
         };
+        db.collection('rounds').doc(roundId).collection('nomBudgets').doc(user.uid).update({
+            used: firebase.firestore.FieldValue.increment(1),
+            remaining: firebase.firestore.FieldValue.increment(-1),
+        })
         db.collection('rounds').doc(roundId).collection('nominations').add(data)
-        .then(() => setComplete(true))
+        .then(() => setComplete(true));
     };
 
     const handleChange:ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -59,6 +64,7 @@ const NominationCreatePage:React.FC = () => {
     }
 
     useEffect(() => {
+        document.title = 'New Nomination'
         db.collection('rounds').doc(roundId).get()
         .then((roundDoc) => {
             //@ts-ignore

@@ -12,6 +12,7 @@ const RoundListPage:React.FC = () => {
     const [rounds, setRounds] = useState<any>(null);
     
     useEffect(() => {
+        document.title = 'Nomination Rounds';
         db.collection('rounds').get()
         .then((collection) => {
             setRounds(collection.docs);
