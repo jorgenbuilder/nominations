@@ -1,10 +1,12 @@
-import React, { ChangeEventHandler, FormEventHandler, useContext, useState } from 'react';
+import React, { ChangeEventHandler, FormEventHandler, useContext, useEffect, useState } from 'react';
+import { Breadcrumb } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import { db } from '../firebase';
 import NominationForm from '../Forms/Nominations';
-import { Nomination } from '../Models';
+import { Nomination, Round } from '../Models';
 import { AuthContext } from '../Providers/Auth';
+import LoadingPage from './Loading';
 import Page from './_Base';
 
 const NominationCreatePage:React.FC = () => {
@@ -15,6 +17,8 @@ const NominationCreatePage:React.FC = () => {
     const [title, setTitle] = useState<string>('');
     const [spotifyURI, setSpotifyURI] = useState<string>('');
     const [complete, setComplete] = useState<boolean>(false);
+    const [round, setRound] = useState<Round>();
+    const [loading, setLoading] = useState<boolean>(true);
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
@@ -51,15 +55,34 @@ const NominationCreatePage:React.FC = () => {
                 Allowed values: ${Object.keys(handlers).join(', ')}.
             `)
         }
-        handlers[handler as keyof typeof handlers](e.target.value)
+        handlers[handler as keyof typeof handlers](e.target.value);
     }
+
+    useEffect(() => {
+        db.collection('rounds').doc(roundId).get()
+        .then((roundDoc) => {
+            //@ts-ignore
+            const roundData: Round = roundDoc.data();
+            setRound(roundData);
+            setLoading(false);
+        })
+    }, [roundId]);
 
     if (complete) {
         return <Redirect to={`/rounds/${roundId}/`} />
     }
+    
+    if (loading || !round) {
+        return <LoadingPage />;
+    }
 
     return (
         <Page>
+            <Breadcrumb>
+                <Breadcrumb.Item href={`/rounds/`}>Rounds</Breadcrumb.Item>
+                <Breadcrumb.Item href={`/rounds/${roundId}/`}>{round.name}</Breadcrumb.Item>
+                <Breadcrumb.Item>New Nomination</Breadcrumb.Item>
+            </Breadcrumb>
             <h1>New Nomination</h1>
             <NominationForm
                 title={title}

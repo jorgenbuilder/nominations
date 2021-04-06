@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, ListGroup } from 'react-bootstrap';
+import { Badge, Breadcrumb, Button, ListGroup } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
@@ -35,6 +35,10 @@ const RoundDetailPage:React.FC = () => {
 
     return (
         <Page>
+            <Breadcrumb>
+                <Breadcrumb.Item href={`/rounds/`}>Rounds</Breadcrumb.Item>
+                <Breadcrumb.Item>{round.name}</Breadcrumb.Item>
+            </Breadcrumb>
             <h1 style={{marginBottom: '1em'}}>{round.name}</h1>
 
             <h2>The Rules</h2>

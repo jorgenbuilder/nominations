@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import { AuthContext } from '../Providers/Auth';
 import React, { FormEventHandler, MouseEventHandler, useContext, useEffect, useState } from 'react';
-import { Badge, Button, Form, ListGroup } from 'react-bootstrap';
+import { Badge, Breadcrumb, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { Nomination, Round, Vote } from '../Models';
@@ -97,6 +97,11 @@ const NominationPage:React.FC = () => {
     
     return (
         <Page>
+            <Breadcrumb>
+                <Breadcrumb.Item href={`/rounds/`}>Rounds</Breadcrumb.Item>
+                <Breadcrumb.Item href={`/rounds/${roundId}/`}>{round.name}</Breadcrumb.Item>
+                <Breadcrumb.Item>{nomination.data.title}</Breadcrumb.Item>
+            </Breadcrumb>
             <h1 style={{marginBottom: '1em'}}>{nomination.data.title}</h1>
             <iframe
                 title="spotify embed"
