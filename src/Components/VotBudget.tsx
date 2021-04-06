@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Alert, Badge, Spinner } from 'react-bootstrap';
-import { VotBudget, VoteBudgetData } from '../Models';
+import { VotBudget } from '../Models';
 import { AuthContext } from '../Providers/Auth';
 import FirestoreAPI from '../Services/FirestoreAPI';
 
