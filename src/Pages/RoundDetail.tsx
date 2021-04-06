@@ -49,20 +49,22 @@ const RoundDetailPage:React.FC = () => {
             </ul>
 
             <h2 style={{marginBottom: '.5em'}}>Nominations</h2>
-            {nominations.length
-                ? <ListGroup style={{marginBottom: '1em'}}>
-                    {nominations.map((nomination: any) => {
-                        const data: Nomination = nomination.data();
-                        return <ListGroup.Item key={nomination.id}>
-                            <Link to={`/rounds/${roundId}/nomination/${nomination.id}`} style={{display: 'block'}}>
-                                {data.data.title}
-                                <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
-                            </Link>
+                <ListGroup style={{marginBottom: '1em'}}>
+                    {nominations.length
+                        ? nominations.map((nomination: any) => {
+                            const data: Nomination = nomination.data();
+                            return <ListGroup.Item key={nomination.id}>
+                                <Link to={`/rounds/${roundId}/nomination/${nomination.id}`} style={{display: 'block'}}>
+                                    {data.data.title}
+                                    <Badge style={{float: 'right'}} variant="primary">{data.points}</Badge>
+                                </Link>
+                            </ListGroup.Item>
+                        })
+                        : <ListGroup.Item>
+                            No nominations yet!
                         </ListGroup.Item>
-                    })}
+                    }
                 </ListGroup>
-                : 'No nominations yet!'
-            }
             <Link to={`/rounds/${roundId}/nomination/create`}>
                 <Button>Nominate a {round.nomSchema.type}</Button>
             </Link>
