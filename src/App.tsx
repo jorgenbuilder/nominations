@@ -24,7 +24,7 @@ const App:React.FC = () => {
   return (
       <Container style={{maxWidth: '600px', marginBottom: '2em'}}>
         <div>
-          <img alt="Logo" style={{margin: '2em auto', display: 'block'}} src={Logo} />
+          <img alt="Logo" style={{margin: '2em auto', display: 'block', maxWidth: '140px', }} src={Logo} />
         </div>
         <Switch>
           {Routes}

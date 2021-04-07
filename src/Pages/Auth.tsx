@@ -17,6 +17,7 @@ const AuthPage:React.FC = () => {
 
     return (
         <Page>
+            <div style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
             <Button
                 onClick={() => {
                     const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
@@ -32,6 +33,7 @@ const AuthPage:React.FC = () => {
             >
             Sign Out
             </button> */}
+            </div>
         </Page>
     );
 };
