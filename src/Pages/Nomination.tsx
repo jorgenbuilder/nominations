@@ -89,6 +89,18 @@ const NominationPage:React.FC = () => {
         }
     }
 
+    const handleDeleteNomination:MouseEventHandler = (e) => {
+        e.preventDefault();
+        if (!user) return;
+        if (!window.confirm(`There's no way to undo this.`)) return;
+        db.collection('rounds').doc(roundId).collection('nomBudgets').doc(user.uid).update({
+            used: firebase.firestore.FieldValue.increment(-1),
+            remaining: firebase.firestore.FieldValue.increment(1),
+        });
+        db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).delete();
+        setComplete(true);
+    }
+
     useEffect(() => {
         if (!user) {
             return
@@ -192,6 +204,12 @@ const NominationPage:React.FC = () => {
                 </div>
                 <Button type="submit">Vote</Button>
             </Form>
+            {nomination.user.uid === user?.uid
+                ? <>
+                    <hr />
+                    <Button variant="danger" onClick={handleDeleteNomination}>Delete Nomination</Button>
+                </>
+                : ''}
         </Page>
     )
 }
