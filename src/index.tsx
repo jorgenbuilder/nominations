@@ -7,6 +7,10 @@ import AuthProvider from './Providers/Auth';
 import { AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, } from 'react-router-dom';
 
+if (['alaja-c3481.web.app', 'alaja-c3481.firebaseapp.com'].includes(window.location.host)) {
+  window.location.href = `https://nominations.ally.audio/${window.location.pathname}`;
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
