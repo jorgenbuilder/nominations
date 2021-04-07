@@ -1,5 +1,4 @@
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
@@ -22,20 +21,15 @@ const App:React.FC = () => {
     return <LoadingPage />;
   }
 
-  if (!isAuthed) {
-    return <Redirect to={{pathname: routes.auth.path}} />
-  }
-
   return (
       <Container style={{maxWidth: '600px', marginBottom: '2em'}}>
         <div>
           <img alt="Logo" style={{margin: '2em auto', display: 'block'}} src={Logo} />
         </div>
-        <Router>
-          <Switch>
-            {Routes}
-          </Switch>
-        </Router>
+        <Switch>
+          {Routes}
+        </Switch>
+        {!isAuthed ? <Redirect to={{pathname: routes.auth.path}} /> : ''}
       </Container>
   )
 }

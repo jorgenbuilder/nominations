@@ -5,12 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AuthProvider from './Providers/Auth';
 import { AnimatePresence } from 'framer-motion';
+import { BrowserRouter as Router, } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
       <AnimatePresence exitBeforeEnter>
-        <App />
+        <Router>
+          <App />
+        </Router>
       </AnimatePresence>
     </AuthProvider>
   </React.StrictMode>,
