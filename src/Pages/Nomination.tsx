@@ -154,7 +154,6 @@ const NominationPage:React.FC = () => {
                 width="100%"
                 height="380"
                 frameBorder="0"
-                allowTransparency={true}
                 allow="encrypted-media"
                 style={{marginBottom: '1em'}}
             />
