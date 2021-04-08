@@ -25,7 +25,10 @@ const SpotifyAuthContextProvider:React.FC<{clientId: string, redirectUri: string
     const [isAuthed, setIsAuthed] = useState<SpotifyAuthContextState['isSpotifyAuthed']>(false);
     const [tokens, setTokens] = useState<SpotifyAuthContextState['spotifyTokens']>();
 
-    const scopes = ['user-read-private'];
+    const scopes = [
+        'user-read-private',  // Used to do search
+        'playlist-modify-public',  // Used to create/modify playlists based on nomination lists
+    ];
 
     const getLocalTokens = (): SpotifyTokens | undefined => {
         const accessToken = window.localStorage.getItem('spotifyAccessToken');

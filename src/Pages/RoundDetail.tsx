@@ -8,6 +8,7 @@ import { db } from '../firebase';
 import { Nomination, Round } from '../Models';
 import LoadingPage from './Loading';
 import Page from './_Base';
+import SpotifyPlaylist from '../Components/SpotifyPlaylist';
 
 const RoundDetailPage:React.FC = () => {
     const { roundId } = useParams<{roundId: string}>();
@@ -42,7 +43,10 @@ const RoundDetailPage:React.FC = () => {
                 <Breadcrumb.Item href={`/rounds/`}>Rounds</Breadcrumb.Item>
                 <Breadcrumb.Item>{round.name}</Breadcrumb.Item>
             </Breadcrumb>
-            <h1 style={{marginBottom: '1em'}}>{round.name}</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1em'}}>
+                <h1>{round.name}</h1>
+                <SpotifyPlaylist />
+            </div>
 
             <h2 style={{marginBottom: '.5em'}}>Nominations</h2>
             <ListGroup style={{marginBottom: '1em'}}>

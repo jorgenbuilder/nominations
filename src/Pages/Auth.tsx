@@ -15,7 +15,7 @@ const AuthPage:React.FC = () => {
     const location = useLocation<{from?: string}>();
 
     if (isAuthed) {
-        return <Redirect to={location.state.from || routes.roundList.path} />;
+        return <Redirect to={location.state?.from || routes.roundList.path} />;
     }
 
     return (

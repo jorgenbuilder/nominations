@@ -22,6 +22,7 @@ interface Round {
     nomSchema: NomSchema;
     votSchema: VotSchema;
     nominations?: Nomination[];
+    playlist?: SpotifyApi.PlaylistObjectFull;
 }
 
 interface VotSchema {
