@@ -4,7 +4,7 @@ import { AuthContext } from '../Providers/Auth';
 import React, { FormEventHandler, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import { Badge, Breadcrumb, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
-import { db } from '../Services/Firestore';
+import { db, deleteNomination, deleteVote, voteOnNomination } from '../Services/Firestore';
 import { VotBudget, Nomination, Round, Vote } from '../Models';
 import LoadingPage from './Loading';
 import Page from './_Base';
@@ -25,68 +25,25 @@ const NominationPage:React.FC = () => {
 
     const userExistingVote = votes?.find((x: any) => x.data().user.name === user?.displayName);
 
-    const handleSubmit:FormEventHandler = (e) => {
+    const handleVoteOnNomination:FormEventHandler = (e) => {
         e.preventDefault();
         if (!user || !userVote) {
             throw new Error('Can\'t vote; no user.');
         }
-        let budgetChange = Object.assign({}, votBudget);
-        if (userExistingVote) {
-            db.votes(roundId, nominationId).doc(userExistingVote.id).delete()
-            const key = userExistingVote.data().points;
-            budgetChange[key] = {
-                allowed: budgetChange[key].allowed,
-                used: budgetChange[key].used - 1,
-                remaining: budgetChange[key].remaining + 1,
-            };
-        }
-        const data: Vote = {
-            points: userVote,
-            user: {
-                uid: user.uid,
-                name: user.displayName || '???',
-                avatarUrl: user.photoURL || '',
-            }
-        };
-        budgetChange[userVote].used = budgetChange[userVote].used + 1;
-        budgetChange[userVote].remaining = budgetChange[userVote].remaining - 1;
-        setVotBudget(budgetChange);
-        
-        Promise.all([
-            db.nominations(roundId).doc(nominationId).update({
-                points: firebase.firestore.FieldValue.increment(userExistingVote ? userVote - userExistingVote.data().points : userVote)
-            }),
-            db.votes(roundId, nominationId).add(data),
-            db.votBudgets(roundId).doc(user.uid).set(budgetChange, { merge: true })
-        ])
+        voteOnNomination(roundId, nominationId, user, userVote, userExistingVote?.id)
         .then(() => setComplete(true));
     }
 
     const handleDeleteVote:MouseEventHandler = (e) => {
         e.preventDefault();
-        if (!user || !votBudget) return;
-        if (userExistingVote) {
-            db.votes(roundId, nominationId).doc(userExistingVote.id).delete()
-            db.nominations(roundId).doc(nominationId).update({
-                points: firebase.firestore.FieldValue.increment(0 - userExistingVote.data().points)
-            });
+        if (!user || !votBudget || !userExistingVote) return;
+        deleteVote(roundId, nominationId, userExistingVote.id, user.uid);
 
-            let budgetChange = Object.assign({}, votBudget);
-            const key = userExistingVote.data().points;
-            budgetChange[key] = {
-                allowed: budgetChange[key].allowed,
-                used: budgetChange[key].used - 1,
-                remaining: budgetChange[key].remaining + 1,
-            };
-            db.votBudgets(roundId).doc(user.uid).set(budgetChange, { merge: true })
-            setVotBudget(budgetChange);
-
-            if (votes) {
-                let v = [...votes];
-                const i = v.indexOf(userExistingVote);
-                v.splice(i, 1);
-                setVotes(v);
-            }
+        if (votes) {
+            let v = [...votes];
+            const i = v.indexOf(userExistingVote);
+            v.splice(i, 1);
+            setVotes(v);
         }
     }
 
@@ -94,11 +51,7 @@ const NominationPage:React.FC = () => {
         e.preventDefault();
         if (!user) return;
         if (!window.confirm(`There's no way to undo this.`)) return;
-        db.nomBudgets(roundId).doc(user.uid).update({
-            used: firebase.firestore.FieldValue.increment(-1),
-            remaining: firebase.firestore.FieldValue.increment(1),
-        });
-        db.nominations(roundId).doc(nominationId).delete();
+        deleteNomination(roundId, nominationId, user.uid);
         setComplete(true);
     }
 
@@ -183,7 +136,7 @@ const NominationPage:React.FC = () => {
                 : <div style={{marginBottom: '1em'}}>No votes yet</div>}
             <h2 style={{marginBottom: '.5em'}}>Your Vote</h2>
             <VotBudgetDisplay roundId={roundId} />
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleVoteOnNomination}>
                 <div onChange={(e) => {
                     //@ts-ignore
                     setUserVote(e.target.value)

@@ -113,3 +113,87 @@ const getOrCreateNomBudget = async (roundId: string, userId: string): Promise<No
 }
 
 export { getOrCreateNomBudget }
+
+
+const deleteVote = async (roundId: string, nominationId: string, voteId: string, userId: string) => {
+  const vote = await db.votes(roundId, nominationId).doc(voteId).get();
+  const voteData = vote.data();
+
+  if (!vote.exists || !voteData) {
+    throw new Error(`Can't delete vote. Doesn't exist.`);
+  }
+
+  const votBudget = await db.votBudgets(roundId).doc(userId).get();
+  const votBudgetData = votBudget.data();
+
+  if (!votBudget.exists || !votBudgetData) {
+    throw new Error(`Can't delete vote. Budget doesn't exists.`)
+  }
+
+  db.votes(roundId, nominationId).doc(voteId).delete();
+  db.nominations(roundId).doc(nominationId).update({
+    points: firebase.firestore.FieldValue.increment(0 - voteData.points)
+  });
+  db.votBudgets(roundId).doc(userId).set({
+    [voteData.points]: {
+      used: votBudgetData[voteData.points].used - 1,
+      remaining: votBudgetData[voteData.points].remaining + 1,
+      allowed: votBudgetData[voteData.points].allowed,
+    }
+  }, { merge: true })
+}
+
+export { deleteVote }
+
+
+const deleteNomination = async (roundId: string, nominationId: string, userId: string) => {
+  db.nomBudgets(roundId).doc(userId).update({
+    used: firebase.firestore.FieldValue.increment(-1),
+    remaining: firebase.firestore.FieldValue.increment(1),
+  });
+  db.nominations(roundId).doc(nominationId).delete();
+}
+
+export { deleteNomination }
+
+
+const voteOnNomination = async (roundId: string, nominationId: string, user: firebase.User, vote: number, existingVoteId?: string) => {
+  // I decided that keying votes off user ID is cool because it's a 1 vote per user thing
+  // Migrating would be a pain
+  // Also, that might become undesireable at some point
+
+  const votBudget = await db.votBudgets(roundId).doc(user.uid).get();
+  const votBudgetData = votBudget.data();
+
+  if (!votBudget.exists || !votBudgetData) {
+    throw new Error(`Can't vote. Budget doesn't exist.`);
+  }
+
+  const existingVote = await db.votes(roundId, nominationId).doc(existingVoteId).get();
+  const existingVoteData = existingVote.data();
+
+  if (existingVoteId && existingVote.exists) {
+    deleteVote(roundId, nominationId, existingVoteId, user.uid);
+  }
+
+  let budgetChange = Object.assign({}, votBudgetData);
+  budgetChange[vote].used ++;
+  budgetChange[vote].remaining --;
+  
+  await Promise.all([
+      db.nominations(roundId).doc(nominationId).update({
+          points: firebase.firestore.FieldValue.increment(existingVoteData ? vote - existingVoteData.points : vote)
+      }),
+      db.votes(roundId, nominationId).add({
+        points: vote,
+        user: {
+          uid: user.uid,
+          name: user.displayName || '???',
+          avatarUrl: user.photoURL || '',
+        }
+      }),
+      db.votBudgets(roundId).doc(user.uid).set(budgetChange, { merge: true })
+  ])
+}
+
+export { voteOnNomination }
