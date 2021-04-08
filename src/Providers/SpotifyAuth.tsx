@@ -58,7 +58,7 @@ const SpotifyAuthContextProvider:React.FC<{clientId: string, redirectUri: string
         // Some kind if API call to test access token
         const api = new Spotify();
         api.setAccessToken(tokens.accessToken);
-        return await api.searchTracks('Electricityscape')
+        return await api.getMe()
         .catch(() => false)
         .then((r) => {
             if (!r) {
