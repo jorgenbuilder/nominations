@@ -42,7 +42,7 @@ const NominationPage:React.FC = () => {
         const data: Vote = {
             points: userVote,
             user: {
-                uid: user.uid || undefined,
+                uid: user.uid,
                 name: user.displayName || '???',
                 avatarUrl: user.photoURL || '',
             }
@@ -131,7 +131,7 @@ const NominationPage:React.FC = () => {
         return <Redirect to={`/rounds/${roundId}/`} />;
     }
 
-    if (loading || !round || !nomination) {
+    if (loading || !round || !nomination || !user) {
         return <LoadingPage />;
     }
 
@@ -204,7 +204,7 @@ const NominationPage:React.FC = () => {
                 </div>
                 <Button type="submit">Vote</Button>
             </Form>
-            {nomination.user.uid === user?.uid
+            {nomination.user.uid === user.uid
                 ? <>
                     <hr />
                     <Button variant="danger" onClick={handleDeleteNomination}>Delete Nomination</Button>
