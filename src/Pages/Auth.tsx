@@ -22,6 +22,7 @@ const AuthPage:React.FC = () => {
         <Page>
             <div style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
                 <Button
+                    size="lg"
                     onClick={() => {
                         const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
                         firebase.auth().signInWithPopup(googleAuthProvider);

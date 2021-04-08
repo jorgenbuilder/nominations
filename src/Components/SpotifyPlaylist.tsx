@@ -57,7 +57,7 @@ const SpotifyPlaylist:React.FC = () => {
     useEffect(() => {
         getOrCreatePlaylist()
         .then(setTracks);
-    }, []);
+    }, [getOrCreatePlaylist, setTracks]);
 
     return (
         <Button variant="success" href={playlist?.external_urls.spotify} target="_blank">
