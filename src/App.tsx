@@ -28,10 +28,12 @@ const App:React.FC = () => {
   } = useContext(SpotifyAuthContext)
 
   let redirect;
-  if (!isAuthed && destination !== routes.auth.path) {
-    redirect = routes.auth.path;
-  } else if (!isSpotifyAuthed && ![routes.spotifyConnect.path, routes.spotifyConnectCallback.path].includes(destination)) {
-    redirect = routes.spotifyConnect.path; 
+  if (![routes.auth.path, routes.spotifyConnect.path, routes.spotifyConnectCallback.path].includes(destination)) {
+    if (!isAuthed) {
+      redirect = routes.auth.path;
+    } else if (!isSpotifyAuthed ) {
+      redirect = routes.spotifyConnect.path; 
+    }
   }
 
   const Routes = Object.values(routes).map(conf => <Route {...conf} key={conf.path} />);
