@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-import { Redirect } from 'react-router-dom';
+import firebase from 'firebase/app';
+import 'firebase/auth'
 import routes from '../routes';
 import React, { useContext } from 'react';
 import { Button } from 'react-bootstrap';

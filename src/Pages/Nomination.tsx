@@ -1,4 +1,5 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { AuthContext } from '../Providers/Auth';
 import React, { FormEventHandler, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import { Badge, Breadcrumb, Button, Form, ListGroup } from 'react-bootstrap';

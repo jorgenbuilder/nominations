@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-import React, { ChangeEventHandler, FormEventHandler, useContext, useEffect, useState } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { Breadcrumb } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
