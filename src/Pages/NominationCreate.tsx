@@ -4,7 +4,7 @@ import React, { FormEventHandler, useContext, useEffect, useState } from 'react'
 import { Breadcrumb } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
-import { db } from '../firebase';
+import { db } from '../Services/Firestore';
 import NominationForm from '../Forms/Nominations';
 import { Nomination, Round } from '../Models';
 import { AuthContext } from '../Providers/Auth';
@@ -40,11 +40,11 @@ const NominationCreatePage:React.FC = () => {
                 avatarUrl: user.photoURL || '',
             }
         };
-        db.collection('rounds').doc(roundId).collection('nomBudgets').doc(user.uid).update({
+        db.nomBudgets(roundId).doc(user.uid).update({
             used: firebase.firestore.FieldValue.increment(1),
             remaining: firebase.firestore.FieldValue.increment(-1),
         })
-        db.collection('rounds').doc(roundId).collection('nominations').add(data)
+        db.nominations(roundId).add(data)
         .then(() => setComplete(true));
     };
 
@@ -66,7 +66,7 @@ const NominationCreatePage:React.FC = () => {
 
     useEffect(() => {
         document.title = 'New Nomination'
-        db.collection('rounds').doc(roundId).get()
+        db.rounds.doc(roundId).get()
         .then((roundDoc) => {
             //@ts-ignore
             const roundData: Round = roundDoc.data();

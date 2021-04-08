@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Alert, Spinner } from 'react-bootstrap';
 import { NomBudget } from '../Models';
 import { AuthContext } from '../Providers/Auth';
-import FirestoreAPI from '../Services/FirestoreAPI';
+import { getOrCreateNomBudget } from '../Services/Firestore';
 
 interface NomBudgetProps {
     roundId: string;
@@ -16,7 +16,7 @@ const NomBudgetDisplay:React.FC<NomBudgetProps> = ({ roundId }) => {
 
     useEffect(() => {
         if (!user) return;
-        FirestoreAPI.getOrCreateNomBudget(roundId, user.uid)
+        getOrCreateNomBudget(roundId, user.uid)
         .then(setBudget)
         .finally(() => setLoading(false));
     }, [roundId, user]);

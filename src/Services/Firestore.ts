@@ -13,6 +13,8 @@ import {
     Vote,
     NomBudget,
     VotBudget,
+    VotSchema,
+    NomSchema,
 } from '../Models';
 
 // This helper function pipes your types through a firestore converter
@@ -40,28 +42,74 @@ const db = {
 export { db }
 export default db
 
-/**
- * Some examples of how to use:
- */
 
-// const example = async (id: string) => {
-//   // firestore just as you know it, but with types
-//   const userDoc = await db.users.doc(id).get()
-//   const { blackLivesMatter } = userDoc.data()
-//   return blackLivesMatter === true // obviously
-// }
+// Firestore operations
 
-// const createExample = async (userId: string) => {
-//   await db.userPosts(userId).doc().create({
-//     something: false,
-//     somethingElse: true
-//   })
-// }
+const votBudgetFromSchema = (schema: VotSchema): VotBudget => {
+  return Object.keys(schema).reduce((agg: VotBudget, key: string) => {
+    const points = parseInt(key);
+    agg[points] = {
+        allowed: schema[points],
+        used: 0,
+        remaining: schema[points],
+    };
+    return agg;
+}, {})
+}
 
-// // Always use set for updates as firestore doesn't type update function correctly yet!
-// const updateExample = async (id: string) => {
-//   await db.users.doc(id).set({
-//     firstName: 'Jamie',
-//     blackLivesMatter: true
-//   }, { merge: true })
-// }
+const getOrCreateVotBudget = async (roundId: string, userId: string): Promise<VotBudget> => {
+  const budgetDoc = await db.votBudgets(roundId).doc(userId).get();
+  const data = budgetDoc.data();
+
+  if (budgetDoc.exists && data) {
+      return data;
+  }
+
+  const roundDoc = await db.rounds.doc(roundId).get();
+  const roundData = roundDoc.data();
+
+  if (!roundDoc.exists || !roundData) {
+      throw new Error(`That round doesn't exist!`);
+  }
+
+  const schema = roundData.votSchema;
+  const budget = votBudgetFromSchema(schema);
+  await db.votBudgets(roundId).doc(userId).set(budget);
+
+  return budget;
+}
+
+export { getOrCreateVotBudget }
+
+
+const nomBudgetFromSchema = (schema: NomSchema): NomBudget => {
+  return {
+    allowed: schema.count,
+    used: 0,
+    remaining: schema.count,
+  }
+}
+
+const getOrCreateNomBudget = async (roundId: string, userId: string): Promise<NomBudget> => {
+  const budgetDoc = await db.nomBudgets(roundId).doc(userId).get();
+  const budgetData = budgetDoc.data();
+
+  if (budgetDoc.exists && budgetData) {
+      return budgetData;
+  }
+
+  const roundDoc = await db.rounds.doc(roundId).get();
+  const roundData = roundDoc.data();
+
+  if (!roundDoc.exists || !roundData) {
+      throw new Error(`That round doesn't exist!`)
+  }
+
+  const schema = roundData.nomSchema;
+  const budget = nomBudgetFromSchema(schema);
+  await db.nomBudgets(roundId).doc(userId).set(budget);
+
+  return budget
+}
+
+export { getOrCreateNomBudget }

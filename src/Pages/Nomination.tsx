@@ -4,12 +4,12 @@ import { AuthContext } from '../Providers/Auth';
 import React, { FormEventHandler, MouseEventHandler, useContext, useEffect, useState } from 'react';
 import { Badge, Breadcrumb, Button, Form, ListGroup } from 'react-bootstrap';
 import { Redirect, useParams } from 'react-router-dom';
-import { db } from '../firebase';
+import { db } from '../Services/Firestore';
 import { VotBudget, Nomination, Round, Vote } from '../Models';
 import LoadingPage from './Loading';
 import Page from './_Base';
 import VotBudgetDisplay from '../Components/VotBudget';
-import FirestoreAPI from '../Services/FirestoreAPI';
+import { getOrCreateVotBudget } from '../Services/Firestore';
 
 const NominationPage:React.FC = () => {
     const { authedFirebaseUser: user } = useContext(AuthContext);
@@ -32,7 +32,7 @@ const NominationPage:React.FC = () => {
         }
         let budgetChange = Object.assign({}, votBudget);
         if (userExistingVote) {
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
+            db.votes(roundId, nominationId).doc(userExistingVote.id).delete()
             const key = userExistingVote.data().points;
             budgetChange[key] = {
                 allowed: budgetChange[key].allowed,
@@ -53,11 +53,11 @@ const NominationPage:React.FC = () => {
         setVotBudget(budgetChange);
         
         Promise.all([
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).update({
+            db.nominations(roundId).doc(nominationId).update({
                 points: firebase.firestore.FieldValue.increment(userExistingVote ? userVote - userExistingVote.data().points : userVote)
             }),
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').add(data),
-            FirestoreAPI.updateVotBudget(roundId, user.uid, budgetChange),
+            db.votes(roundId, nominationId).add(data),
+            db.votBudgets(roundId).doc(user.uid).set(budgetChange, { merge: true })
         ])
         .then(() => setComplete(true));
     }
@@ -66,8 +66,8 @@ const NominationPage:React.FC = () => {
         e.preventDefault();
         if (!user || !votBudget) return;
         if (userExistingVote) {
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').doc(userExistingVote.id).delete()
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).update({
+            db.votes(roundId, nominationId).doc(userExistingVote.id).delete()
+            db.nominations(roundId).doc(nominationId).update({
                 points: firebase.firestore.FieldValue.increment(0 - userExistingVote.data().points)
             });
 
@@ -78,7 +78,7 @@ const NominationPage:React.FC = () => {
                 used: budgetChange[key].used - 1,
                 remaining: budgetChange[key].remaining + 1,
             };
-            FirestoreAPI.updateVotBudget(roundId, user.uid, budgetChange);
+            db.votBudgets(roundId).doc(user.uid).set(budgetChange, { merge: true })
             setVotBudget(budgetChange);
 
             if (votes) {
@@ -94,11 +94,11 @@ const NominationPage:React.FC = () => {
         e.preventDefault();
         if (!user) return;
         if (!window.confirm(`There's no way to undo this.`)) return;
-        db.collection('rounds').doc(roundId).collection('nomBudgets').doc(user.uid).update({
+        db.nomBudgets(roundId).doc(user.uid).update({
             used: firebase.firestore.FieldValue.increment(-1),
             remaining: firebase.firestore.FieldValue.increment(1),
         });
-        db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).delete();
+        db.nominations(roundId).doc(nominationId).delete();
         setComplete(true);
     }
 
@@ -108,10 +108,10 @@ const NominationPage:React.FC = () => {
         }
 
         Promise.all([
-            db.collection('rounds').doc(roundId).get(),
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).get(),
-            db.collection('rounds').doc(roundId).collection('nominations').doc(nominationId).collection('votes').get(),
-            FirestoreAPI.getOrCreateVotBudget(roundId, user.uid),
+            db.rounds.doc(roundId).get(),
+            db.nominations(roundId).doc(nominationId).get(),
+            db.votes(roundId, nominationId).get(),
+            getOrCreateVotBudget(roundId, user.uid),
         ]).then(([roundDoc, nominationDoc, votes, votBudget]) => {
             //@ts-ignore
             const roundData: Round = roundDoc.data();

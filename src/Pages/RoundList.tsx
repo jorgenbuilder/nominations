@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Button, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { db } from '../firebase';
+import { db } from '../Services/Firestore';
 import { Round } from '../Models';
 import routes from '../routes';
 import LoadingPage from './Loading';
@@ -13,7 +13,7 @@ const RoundListPage:React.FC = () => {
     
     useEffect(() => {
         document.title = 'Nomination Rounds';
-        db.collection('rounds').get()
+        db.rounds.get()
         .then((collection) => {
             setRounds(collection.docs);
             setLoading(false);

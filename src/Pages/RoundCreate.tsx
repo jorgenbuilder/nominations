@@ -1,7 +1,7 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
 import { Breadcrumb, Button, Form } from 'react-bootstrap';
 import { Redirect } from 'react-router';
-import { db } from '../firebase';
+import { db } from '../Services/Firestore';
 import { Round, NomSchema } from '../Models';
 import Page from './_Base';
 
@@ -24,7 +24,7 @@ const RoundCreatePage:React.FC = () => {
             },
             votSchema: JSON.parse(votingRules)
         };
-        db.collection('rounds').add(data)
+        db.rounds.add(data)
         .then(() => setComplete(true))
     };
 

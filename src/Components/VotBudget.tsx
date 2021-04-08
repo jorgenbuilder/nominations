@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Alert, Badge, Spinner } from 'react-bootstrap';
 import { VotBudget } from '../Models';
 import { AuthContext } from '../Providers/Auth';
-import FirestoreAPI from '../Services/FirestoreAPI';
+import { getOrCreateVotBudget } from '../Services/Firestore';
 
 interface VotBudgetProps {
     roundId: string;
@@ -16,7 +16,7 @@ const VotBudgetDisplay:React.FC<VotBudgetProps> = ({ roundId }) => {
 
     useEffect(() => {
         if (!user) return;
-        FirestoreAPI.getOrCreateVotBudget(roundId, user.uid)
+        getOrCreateVotBudget(roundId, user.uid)
         .then(setBudget)
         .finally(() => setLoading(false));
     }, [roundId, user]);

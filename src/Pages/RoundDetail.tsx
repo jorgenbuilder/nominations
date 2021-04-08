@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import VotBudget from '../Components/VotBudget';
 import NomBudget from '../Components/NomBudget';
-import { db } from '../firebase';
+import { db } from '../Services/Firestore';
 import { Nomination, Round } from '../Models';
 import LoadingPage from './Loading';
 import Page from './_Base';
@@ -18,7 +18,7 @@ const RoundDetailPage:React.FC = () => {
     const [loadingNominations, setLoadingNominations] = useState<boolean>(true);
     
     useEffect(() => {
-        db.collection('rounds').doc(roundId).get()
+        db.rounds.doc(roundId).get()
         .then((roundDoc) => {
             //@ts-ignore
             const data: Round = roundDoc.data();
@@ -26,7 +26,7 @@ const RoundDetailPage:React.FC = () => {
             setLoading(false);
             document.title = data.name;
         });
-        db.collection('rounds').doc(roundId).collection('nominations').orderBy('points', 'desc').get()
+        db.nominations(roundId).orderBy('points', 'desc').get()
         .then((nominations) => {
             setNominations(nominations.docs);
             setLoadingNominations(false);
