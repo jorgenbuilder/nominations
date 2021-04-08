@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { SpotifyAPIContext } from '../Providers/SpotifyAPI';
@@ -12,7 +12,7 @@ const SpotifyPlaylist:React.FC = () => {
 
     const [playlist, setPlaylist] = useState<SpotifyApi.PlaylistObjectFull> ();
 
-    const setTracks = async (playlistId: string) => {
+    const setTracks = useCallback(async (playlistId: string) => {
         const nominationDocs = await db.nominations(roundId).orderBy('points', 'desc').get();
         const tracks = nominationDocs.docs.reduce((agg: string[], nom) => {
             // https://open.spotify.com/track/39rHfrVqCX6A55GF7uOZSC?si=kljCwg7NQbe0JKcQFTXF0A
@@ -27,9 +27,9 @@ const SpotifyPlaylist:React.FC = () => {
         }, [] as string[])
 
         await SpotifyAPI.replaceTracksInPlaylist(playlistId, tracks);
-    }
+    }, [SpotifyAPI, roundId]);
 
-    const getOrCreatePlaylist = async () => {
+    const getOrCreatePlaylist = useCallback(async () => {
         const roundsRef = db.rounds.doc(roundId);
         const roundDoc = await roundsRef.get();
         const roundData = roundDoc.data();
@@ -52,7 +52,7 @@ const SpotifyPlaylist:React.FC = () => {
         }, { merge: true })
         setPlaylist(createdPlaylist);
         return createdPlaylist?.id;
-    }
+    }, [SpotifyAPI, roundId])
 
     useEffect(() => {
         getOrCreatePlaylist()
