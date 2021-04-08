@@ -11,6 +11,7 @@ import React, { useContext } from 'react';
 import { AuthContext } from './Providers/Auth';
 import LoadingPage from './Pages/Loading';
 import { SpotifyAuthContext } from './Providers/SpotifyAuth';
+import AccountDropdown from './Components/AccountDropdown';
 
 const App:React.FC = () => {
   const location = useLocation();
@@ -41,6 +42,7 @@ const App:React.FC = () => {
 
   return (
       <Container style={{maxWidth: '600px', marginBottom: '2em'}}>
+        <AccountDropdown />
         <div>
           <img alt="Logo" style={{margin: '2em auto', display: 'block', maxWidth: '140px', }} src={Logo} />
         </div>
