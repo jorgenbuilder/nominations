@@ -1,4 +1,6 @@
 import AuthPage from './Pages/Auth';
+import SpotifyConnectPage from './Pages/SpotifyConnect';
+import SpotifyConnectCallbackPage from './Pages/SpotifyConnectCallback';
 import RoundDetailPage from './Pages/RoundDetail';
 import RoundListPage from './Pages/RoundList';
 import RoundCreatePage from './Pages/RoundCreate';
@@ -24,6 +26,16 @@ const routes: {[key: string]: RouteConfig} = {
     auth: {
         path: '/auth',
         component: AuthPage,
+        private: false,
+    },
+    spotifyConnectCallback: {
+        path: '/spotify-connect/callback/',
+        component: SpotifyConnectCallbackPage,
+        private: false,
+    },
+    spotifyConnect: {
+        path: '/spotify-connect',
+        component: SpotifyConnectPage,
         private: false,
     },
     nominationCreate: {

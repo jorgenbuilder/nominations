@@ -13,8 +13,6 @@ const AuthContext = createContext<AuthContextState>({
     isAuthLoading: true,
 });
 
-AuthContext.displayName = 'AuthContext';
-
 const AuthContextProvider:React.FC = ({ children }) => {
     const [isAuthLoading, setIsAuthLoading] = useState<AuthContextState['isAuthLoading']>(true);
     const [isAuthed, setIsAuthed] = useState<AuthContextState['isAuthed']>();

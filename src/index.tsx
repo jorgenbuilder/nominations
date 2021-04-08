@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AuthProvider from './Providers/Auth';
+import SpotifyAuthProvider from './Providers/SpotifyAuth';
+import SpotifyAPIProvider from './Providers/SpotifyAPI';
 import { AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, } from 'react-router-dom';
 
@@ -14,11 +16,15 @@ if (['alaja-c3481.web.app', 'alaja-c3481.firebaseapp.com'].includes(window.locat
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <AnimatePresence exitBeforeEnter>
-        <Router>
-          <App />
-        </Router>
-      </AnimatePresence>
+      <SpotifyAuthProvider clientId="721aac2d9642429a8457bc322b1c8efd" redirectUri="/spotify-connect/callback/">
+        <SpotifyAPIProvider>
+          <AnimatePresence exitBeforeEnter>
+            <Router>
+              <App />
+            </Router>
+          </AnimatePresence>
+        </SpotifyAPIProvider>
+      </SpotifyAuthProvider>
     </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root')

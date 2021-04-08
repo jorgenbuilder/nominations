@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import React, { FormEventHandler, useContext, useEffect, useState } from 'react';
 import { Breadcrumb } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { Redirect } from 'react-router-dom';
@@ -47,20 +48,20 @@ const NominationCreatePage:React.FC = () => {
         .then(() => setComplete(true));
     };
 
-    const handleChange:ChangeEventHandler<HTMLInputElement> = (e) => {
-        e.preventDefault();
-        const handler = e.target?.dataset?.changeProp;
+    const handleChange = (prop: string, value: string) => {
         const handlers = {
-            'title': setTitle,
+            'title': (value: string) => {
+                setTitle(value);
+            },
             'spotifyURI': setSpotifyURI,
         };
-        if (!handler || !(handler in handlers)) {
+        if (!prop || !(prop in handlers)) {
             throw new Error(`
-                Unrecognized/missing change handler "${handler}".
+                Unrecognized/missing change handler "${prop}".
                 Allowed values: ${Object.keys(handlers).join(', ')}.
             `)
         }
-        handlers[handler as keyof typeof handlers](e.target.value);
+        handlers[prop as keyof typeof handlers](value);
     }
 
     useEffect(() => {
