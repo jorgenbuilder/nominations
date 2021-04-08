@@ -32,7 +32,7 @@ const VotBudgetDisplay:React.FC<VotBudgetProps> = ({ roundId }) => {
     const budgetNodes = Object.keys(budget).map((key: string) => {
         const points = parseInt(key);
         const data = budget[points];
-        return <li>
+        return <li key={`votBudgetNode-${key}`}>
             <span style={{marginRight: '.5em'}}>{points} Point{points > 1 ? 's' : ''}:</span>
             <Badge variant='success'>{data.used}</Badge> / <Badge variant='primary'>{data.allowed}</Badge>
         </li>
