@@ -163,9 +163,9 @@ const NominationPage:React.FC = () => {
             <h2 style={{marginBottom: '.5em'}}>Votes</h2>
             {votes?.length
                 ? <ListGroup style={{marginBottom: '2em'}}>
-                    {votes.map((vote: any) => {
+                    {votes.map((vote: any, i: number) => {
                         const data: Vote = vote.data();
-                        return <ListGroup.Item>
+                        return <ListGroup.Item key={`votes-${i}`}>
                             <img width="34" style={{marginRight: '.5em'}} src={data.user.avatarUrl} alt="User" />
                             {data.user.name} 
                             {vote === userExistingVote
