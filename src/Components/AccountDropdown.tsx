@@ -19,7 +19,7 @@ const AccountDropdown:React.FC = () => {
         <Element>
             <Dropdown>
                 <Dropdown.Toggle>
-                    Settings
+                    Account
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item onClick={() => firebase.auth().signOut()}>Sign Out</Dropdown.Item>
