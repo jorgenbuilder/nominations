@@ -198,6 +198,7 @@ const NominationPage:React.FC = () => {
                             id={`asdfasdf-${key}`}
                             //@ts-ignore
                             label={`${key} Point`}
+                            key={`vote-${key}`}
                         />
                     })}
                 </div>
