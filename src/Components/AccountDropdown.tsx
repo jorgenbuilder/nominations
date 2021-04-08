@@ -3,7 +3,7 @@ import 'firebase/auth'
 import styled from 'styled-components';
 import { useContext } from 'react';
 import { AuthContext } from '../Providers/Auth';
-import { Dropdown, Image } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 
 const Element = styled.div`
 position: absolute;
