@@ -27,7 +27,6 @@ const NominationForm:React.FC<NominationFormProps> = (props) => {
                     Search
                 </Form.Label>
                 <SpotifySearch
-                    searchType="song"
                     onChange={(option) => {
                         setSpotifyEntity(option[0]);
                         handleChange('title', option[0]?.name)
