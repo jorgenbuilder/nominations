@@ -15,6 +15,7 @@ import {
     VotBudget,
     VotSchema,
     NomSchema,
+    Repertoire,
 } from '../Models';
 
 // This helper function pipes your types through a firestore converter
@@ -36,6 +37,8 @@ const db = {
   votes: (roundId: string, nominationId: string) => dataPoint<Vote>(`rounds/${roundId}/nominations/${nominationId}/votes`),
   nomBudgets: (roundId: string) => dataPoint<NomBudget>(`rounds/${roundId}/nomBudgets`),
   votBudgets: (roundId: string) => dataPoint<VotBudget>(`rounds/${roundId}/votBudgets`),
+  repertoires: dataPoint<Repertoire>('repertoires'),
+  repertoireTracks: (repertoireId: string) => dataPoint<SpotifyApi.TrackObjectFull>(`repertoires/${repertoireId}/tracks`),
 }
 
 // export your helper
@@ -197,3 +200,35 @@ const voteOnNomination = async (roundId: string, nominationId: string, user: fir
 }
 
 export { voteOnNomination }
+
+
+const getOrCreateRepertoire = async () => {
+  const repertoires = await db.repertoires.get();
+  if (repertoires.size > 0) {
+    return repertoires.docs[0];
+  } else {
+    const repertoire = await db.repertoires.add({tracks: []});
+    return await repertoire.get();
+  }
+}
+
+export { getOrCreateRepertoire }
+
+
+// const updateRepertoire = async () => {
+//   (await db.rounds.get()).forEach(round => {
+//     const data = round.data();
+//     const nominations = data.nominations?.sort((a, b) => {
+//       if ((a.points || 0) > (b.points || 0)) {
+//         return -1;
+//       } else if ((a.points || 0) < (b.points || 0)) {
+//         return 1;
+//       } else {
+//         return 0;
+//       }
+//     });
+//     return nominations?.map(x => {
+//       return x.data.spotifyURI;
+//     }).slice(0, 3);
+//   })
+// }

@@ -8,6 +8,7 @@ import NominationPage from './Pages/Nomination';
 import NominationCreatePage from './Pages/NominationCreate';
 import IndexPage from './Pages/Index';
 import NotFoundPage from './Pages/404';
+import RepertoirePage from './Pages/Repertoire';
 
 interface RouteConfig {
     path: string;
@@ -61,6 +62,11 @@ const routes: {[key: string]: RouteConfig} = {
     roundList: {
         path: '/rounds',
         component: RoundListPage,
+        private: true,
+    },
+    repertiore: {
+        path: '/repertoire',
+        component: RepertoirePage,
         private: true,
     },
     notFound: {

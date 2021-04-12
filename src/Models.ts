@@ -61,6 +61,9 @@ interface VotBudget {
     [key: number]: VoteBudgetData;
 }
 
+interface Repertoire {
+}
+
 export type {
     Nomination,
     SongData,
@@ -72,4 +75,5 @@ export type {
     NomBudget,
     VotBudget,
     VoteBudgetData,
+    Repertoire,
 }
