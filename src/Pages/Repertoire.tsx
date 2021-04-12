@@ -98,6 +98,8 @@ const RepertoirePage:React.FC = () => {
                 }
                 {randomTrackFeatures
                     ? <>
+                        <dt>Lyrics</dt>
+                        <dd><a href={`https://genius.com/search?q=${encodeURIComponent(`${randomTrack?.name || ''}, ${randomTrack?.artists[0].name || ''}`)}`}>Genius</a></dd>
                         <dt>Key</dt>
                         <dd>{['C', 'D flat', 'D', 'E flat', 'E', 'F', 'G flat', 'G', 'A flat', 'A', 'B flat', 'B', 'C flat'][randomTrackFeatures.key]}</dd>
                         <dt>Tempo</dt>
