@@ -101,7 +101,7 @@ const RepertoirePage:React.FC = () => {
                         <dt>Lyrics</dt>
                         <dd><a href={`https://genius.com/search?q=${encodeURIComponent(`${randomTrack?.name || ''}, ${randomTrack?.artists[0].name || ''}`)}`}>Genius</a></dd>
                         <dt>Key</dt>
-                        <dd>{['C', 'D flat', 'D', 'E flat', 'E', 'F', 'G flat', 'G', 'A flat', 'A', 'B flat', 'B', 'C flat'][randomTrackFeatures.key]}</dd>
+                        <dd>{['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B', 'C♭'][randomTrackFeatures.key]}</dd>
                         <dt>Tempo</dt>
                         <dd>{Math.floor(randomTrackFeatures.tempo)}BPM</dd>
                         <dt>Time Signature</dt>
