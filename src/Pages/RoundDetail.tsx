@@ -9,6 +9,7 @@ import { Nomination, Round } from '../Models';
 import LoadingPage from './Loading';
 import Page from './_Base';
 import SpotifyPlaylist from '../Components/SpotifyPlaylist';
+import OutstandingVotes from '../Components/OutstandingVotes';
 
 const RoundDetailPage:React.FC = () => {
     const { roundId } = useParams<{roundId: string}>();
@@ -65,6 +66,7 @@ const RoundDetailPage:React.FC = () => {
                     </ListGroup.Item>
                 }
             </ListGroup>
+            <OutstandingVotes />
             <VotBudget roundId={roundId} />
             <NomBudget roundId={roundId} />
             <Link to={`/rounds/${roundId}/nomination/create`}>
