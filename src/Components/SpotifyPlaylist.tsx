@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { parseSpotifyUri } from '../helpers';
 import { SpotifyAPIContext } from '../Providers/SpotifyAPI';
 import db from '../Services/Firestore';
 
@@ -16,12 +17,7 @@ const SpotifyPlaylist:React.FC = () => {
         const nominationDocs = await db.nominations(roundId).orderBy('points', 'desc').get();
         const tracks = nominationDocs.docs.reduce((agg: string[], nom) => {
             // https://open.spotify.com/track/39rHfrVqCX6A55GF7uOZSC?si=kljCwg7NQbe0JKcQFTXF0A
-            let uri = nom.data().data.spotifyURI
-            if (uri.includes('http')) {
-                uri = uri.split('track/')[1];
-                uri = uri.split('?')[0];
-                uri = `spotify:track:${uri}`
-            }
+            let uri = parseSpotifyUri(nom.data().data.spotifyURI);
             agg.push(uri);
             return agg;
         }, [] as string[])

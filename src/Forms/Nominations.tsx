@@ -1,7 +1,9 @@
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import SpotifySearch from '../Components/SpotifySearch';
+import { parseSpotifyUri } from '../helpers';
 import { SongData } from '../Models';
+import { SpotifyAPIContext } from '../Providers/SpotifyAPI';
 
 interface NominationFormProps extends SongData {
     handleSubmit: FormEventHandler;
@@ -14,7 +16,23 @@ const NominationForm:React.FC<NominationFormProps> = (props) => {
         handleChange,
     } = props;
 
-    const [spotifyEntity, setSpotifyEntity] = useState<SpotifyApi.TrackObjectFull | SpotifyApi.AlbumObjectSimplified>();
+    const { SpotifyAPI } = useContext(SpotifyAPIContext);
+
+    const [spotifyEntity, setSpotifyEntity] = useState<SpotifyApi.TrackObjectFull>();
+    const [spotifyUri, setSpotifyUri] = useState<string>('');
+
+    const handleUrl:FormEventHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const uri = parseSpotifyUri(spotifyUri);
+        SpotifyAPI.getTrack(uri.split(':')[2])
+        .then(r => {
+            setSpotifyEntity(r)
+            handleChange('title', r.name)
+            handleChange('spotifyURI', r.uri)
+        })
+    }
+
     let entity, id;
     if (spotifyEntity) {
         [, entity, id] = spotifyEntity.uri.split(':');
@@ -22,7 +40,18 @@ const NominationForm:React.FC<NominationFormProps> = (props) => {
 
     return (
         <>
-            <Form onSubmit={handleSubmit}>
+            <Form style={{marginTop: '1em'}} onSubmit={handleUrl}>
+                <Form.Label>
+                    Spotify URL
+                </Form.Label>
+                <div style={{display: 'flex'}}>
+                    <Form.Control type="text" value={spotifyUri} onChange={(e) => setSpotifyUri(e.currentTarget.value)} />
+                    <Button variant="success" type="submit" style={{marginLeft: '1em'}}>
+                        Fetch
+                    </Button>
+                </div>
+            </Form>
+            <Form style={{marginTop: '1em'}} onSubmit={handleSubmit}>
                 <Form.Label>
                     Search
                 </Form.Label>
