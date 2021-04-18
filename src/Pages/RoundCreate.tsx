@@ -11,7 +11,7 @@ const RoundCreatePage:React.FC = () => {
     const [type, setType] = useState<NomSchema['type']>('song');
     const [count, setCount] = useState<NomSchema['count']>(0);
     const [votingRules, setVotingRules] = useState<string>('{"3": 1, "2": 2, "1": 2}');
-    const [complete, setComplete] = useState<boolean>(false);
+    const [complete, setComplete] = useState<string>();
 
     const handleSubmit:FormEventHandler = (e) => {
         e.preventDefault();
@@ -25,7 +25,7 @@ const RoundCreatePage:React.FC = () => {
             votSchema: JSON.parse(votingRules)
         };
         db.rounds.add(data)
-        .then(() => setComplete(true))
+        .then((round) => setComplete(round.id))
     };
 
     useEffect(() => {
@@ -33,7 +33,7 @@ const RoundCreatePage:React.FC = () => {
     }, [])
 
     if (complete) {
-        return <Redirect to={'/rounds'} />
+        return <Redirect to={`/rounds/${complete}`} />
     }
 
     return (
