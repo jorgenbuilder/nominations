@@ -176,7 +176,7 @@ const voteOnNomination = async (roundId: string, nominationId: string, user: fir
   const existingVoteData = existingVote.data();
 
   if (existingVoteId && existingVote.exists) {
-    deleteVote(roundId, nominationId, existingVoteId, user.uid);
+    await deleteVote(roundId, nominationId, existingVoteId, user.uid);
   }
 
   let budgetChange = Object.assign({}, votBudgetData);
@@ -185,7 +185,7 @@ const voteOnNomination = async (roundId: string, nominationId: string, user: fir
   
   await Promise.all([
       db.nominations(roundId).doc(nominationId).update({
-          points: firebase.firestore.FieldValue.increment(existingVoteData ? vote - existingVoteData.points : vote)
+          points: firebase.firestore.FieldValue.increment(vote)
       }),
       db.votes(roundId, nominationId).add({
         points: vote,
