@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Spinner } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { AuthContext } from '../Providers/Auth';
 import db from '../Services/Firestore';
 
 const OutstandingVotes:React.FC = () => {

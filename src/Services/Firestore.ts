@@ -173,7 +173,6 @@ const voteOnNomination = async (roundId: string, nominationId: string, user: fir
   }
 
   const existingVote = await db.votes(roundId, nominationId).doc(existingVoteId).get();
-  const existingVoteData = existingVote.data();
 
   if (existingVoteId && existingVote.exists) {
     await deleteVote(roundId, nominationId, existingVoteId, user.uid);
